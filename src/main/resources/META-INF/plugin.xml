@@ -1,0 +1,64 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <id>com.dj.tool</id>
+    <name>Code Audit</name>
+
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <vendor email="jiaozhu303@yeha.net" url="https://www.dj.com">DJ</vendor>
+
+    <product-descriptor
+            code="PMYPLUGIN"
+            release-date="20220507"
+            release-version="20221"
+            optional="true"/>
+
+    <description>
+        <![CDATA[
+        Provides support for <a href="https://example.com/my-framework">My
+            Framework</a>.
+        <p>Includes support for:
+        <ul>
+            <li>code completion</li>
+            <li>references</li>
+            <li>refactoring</li>
+            <li>rename</li>
+        </ul>
+        </p>
+  ]]>
+    </description>
+
+    <change-notes>refactor project for compatibility.</change-notes>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <actions>
+        <action id="add-comment" class="com.dj.tool.action.AddComment" text="Code Audit Tool" icon="MyIcons.Action"
+                description="Code Audit tool">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="alt A"/>
+        </action>
+<!--        <action id="add-log" class="com.dj.tool.action.AddLogAction" text="Addlog" icon="MyIcons.Editor"-->
+<!--                description="add code log">-->
+<!--            <add-to-group group-id="ToolsMenu" anchor="last"/>-->
+<!--            <keyboard-shortcut keymap="$default" first-keystroke="meta B"/>-->
+<!--        </action>-->
+    </actions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!--        <applicationService serviceImplementation="com.dj.tool.services.MyApplicationService"/>-->
+        <!--        <projectService serviceImplementation="com.dj.tool.services.MyProjectService"/>-->
+        <toolWindow id="CodeRecord"
+                    icon="MyIcons.ToolWindow"
+                    anchor="bottom"
+                    doNotActivateOnStart="true"
+                    factoryClass="com.dj.tool.action.ManageReviewComment"/>
+        <codeInsight.lineMarkerProvider
+                language=""
+                implementationClass="com.dj.tool.action.LeftMarkIconProvider"/>
+    </extensions>
+
+    <!--    <applicationListeners>-->
+    <!--        <listener class="com.dj.tool.listeners.MyProjectManagerListener"-->
+    <!--                  topic="com.intellij.openapi.project.ProjectManagerListener"/>-->
+    <!--    </applicationListeners>-->
+</idea-plugin>
