@@ -13,7 +13,9 @@
             optional="true"/>
 
     <description>
+
         <![CDATA[
+          <p>本工程基础源代码来自github.主要作用技术型参考，本工程同样遵守apache 2.0 开源协议</p>
         Provides support for <a href="https://example.com/my-framework">My
             Framework</a>.
         <p>Includes support for:
