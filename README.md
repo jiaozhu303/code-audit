@@ -533,4 +533,4 @@ That approach gives more possibilities for testing and debugging pre-releases, f
 [xpath]: https://www.w3.org/TR/xpath-21/
 
 
-### 本工程基础源代码来自github，主要作用技术型参考，本工程同样遵守apache 2.0 开源协议
+### 本工程基础源代码来自github，对源部分源代码文件进行修改，主要作用快速构建使用功能以及技术型参考，本工程同样遵守apache 2.0 开源协议
