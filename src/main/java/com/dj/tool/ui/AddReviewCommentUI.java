@@ -33,6 +33,7 @@ public class AddReviewCommentUI {
     public static void showDialog(ReviewCommentInfoModel model, Project project) {
 
         JDialog dialog = new JDialog(new JFrame());
+        dialog.setTitle("Add Code Audit Record");
         AddReviewCommentUI reviewCommentUI = new AddReviewCommentUI();
         reviewCommentUI.reviewerTextField.setText(model.getReviewer());
         reviewCommentUI.commentsTextArea.setText(model.getComments());
