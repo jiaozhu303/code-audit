@@ -44,6 +44,11 @@
 <!--            <add-to-group group-id="ToolsMenu" anchor="last"/>-->
 <!--            <keyboard-shortcut keymap="$default" first-keystroke="meta B"/>-->
 <!--        </action>-->
+        <action id="code-setting" class="com.dj.tool.action.CodeAuditSetting" text="Code Audit Setting"
+                icon="MyIcons.Action"
+                description="Code Audit Setting">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">

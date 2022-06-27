@@ -44,6 +44,7 @@ public class ManageReviewCommentUI {
     private JTable commentTable;
     public JPanel fullPanel;
     private JButton copyButton;
+    private JButton sync_ConfluenceButton;
     private final Project project;
 
     public ManageReviewCommentUI(Project project) {

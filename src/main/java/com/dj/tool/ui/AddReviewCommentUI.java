@@ -44,7 +44,6 @@ public class AddReviewCommentUI {
         reviewCommentUI.severityComboBox.setSelectedItem(model.getSeverity());
         reviewCommentUI.triggerFactorComboBox.setSelectedItem(model.getFactor());
         reviewCommentUI.saveButton.addActionListener(e -> {
-            //TODO 记录内容
             model.setContent(reviewCommentUI.codeContentsTextArea.getText());
             model.setComments(reviewCommentUI.commentsTextArea.getText());
             model.setReviewer(reviewCommentUI.reviewerTextField.getText());
@@ -52,12 +51,9 @@ public class AddReviewCommentUI {
             model.setType(reviewCommentUI.questionTypeComboBox.getSelectedItem().toString());
             model.setSeverity(reviewCommentUI.severityComboBox.getSelectedItem().toString());
             model.setFactor(reviewCommentUI.triggerFactorComboBox.getSelectedItem().toString());
-
             InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(project.getLocationHash());
             projectCache.addNewComment(model);
-
             CommonUtil.reloadCommentListShow(project);
-
             dialog.dispose();
         });
 
@@ -65,7 +61,6 @@ public class AddReviewCommentUI {
             dialog.dispose();
         });
 
-        // 屏幕中心显示
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int w = (screenSize.width - WIDTH) / 2;
         int h = (screenSize.height * 95 / 100 - HEIGHT) / 2;
