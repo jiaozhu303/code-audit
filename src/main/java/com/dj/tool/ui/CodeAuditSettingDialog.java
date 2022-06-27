@@ -1,7 +1,7 @@
 package com.dj.tool.ui;
 
+import com.dj.tool.common.ApplicationCache;
 import com.dj.tool.model.CodeAuditSettingModel;
-import com.intellij.ide.util.PropertiesComponent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -60,10 +60,10 @@ public class CodeAuditSettingDialog extends JDialog {
     }
 
     private void onOK() {
-        PropertiesComponent appComponent = PropertiesComponent.getInstance();
-        appComponent.setValue(CodeAuditSettingModel.URL_KEY, this.urlTextField.getText());
-        appComponent.setValue(CodeAuditSettingModel.USER_KEY, this.userNameTextField.getText());
-        appComponent.setValue(CodeAuditSettingModel.PASSWORD_KEY, this.passwordTextField.getText());
+        ApplicationCache.saveCodeAuditSetting(
+            this.urlTextField.getText(),
+            this.userNameTextField.getText(),
+            this.passwordTextField.getText());
         dispose();
     }
 

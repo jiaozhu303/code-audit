@@ -39,11 +39,11 @@
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="alt A"/>
         </action>
-<!--        <action id="add-log" class="com.dj.tool.action.AddLogAction" text="Addlog" icon="MyIcons.Editor"-->
-<!--                description="add code log">-->
-<!--            <add-to-group group-id="ToolsMenu" anchor="last"/>-->
-<!--            <keyboard-shortcut keymap="$default" first-keystroke="meta B"/>-->
-<!--        </action>-->
+        <!--        <action id="add-log" class="com.dj.tool.action.AddLogAction" text="Addlog" icon="MyIcons.Editor"-->
+        <!--                description="add code log">-->
+        <!--            <add-to-group group-id="ToolsMenu" anchor="last"/>-->
+        <!--            <keyboard-shortcut keymap="$default" first-keystroke="meta B"/>-->
+        <!--        </action>-->
         <action id="code-setting" class="com.dj.tool.action.CodeAuditSetting" text="Code Audit Setting"
                 icon="MyIcons.Action"
                 description="Code Audit Setting">
@@ -52,8 +52,8 @@
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <!--        <applicationService serviceImplementation="com.dj.tool.services.MyApplicationService"/>-->
-        <!--        <projectService serviceImplementation="com.dj.tool.services.MyProjectService"/>-->
+        <projectService serviceImplementation="com.dj.tool.service.CodeAuditSettingProjectService"/>
+        <applicationService serviceImplementation="com.dj.tool.service.CodeAuditSettingApplicationService"/>
         <toolWindow id="CodeRecord"
                     icon="MyIcons.ToolWindow"
                     anchor="bottom"

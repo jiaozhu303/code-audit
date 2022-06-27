@@ -1,5 +1,6 @@
 package com.dj.tool.ui;
 
+import com.dj.tool.common.ApplicationCache;
 import com.dj.tool.common.CopyOperateUtil;
 import com.dj.tool.common.DateTimeUtil;
 import com.dj.tool.common.ExcelOperateUtil;
@@ -15,6 +16,7 @@ import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.util.Icons;
 import com.intellij.util.ui.TextTransferable;
+import org.apache.commons.compress.utils.Lists;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
@@ -27,6 +29,9 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.dj.tool.common.Constants.*;
 
@@ -44,7 +49,7 @@ public class ManageReviewCommentUI {
     private JTable commentTable;
     public JPanel fullPanel;
     private JButton copyButton;
-    private JButton sync_ConfluenceButton;
+    private JButton syncConfluenceButton;
     private final Project project;
 
     public ManageReviewCommentUI(Project project) {
@@ -216,13 +221,23 @@ public class ManageReviewCommentUI {
 
             if (new ClearConfirmDialog().showAndGet()) {
                 InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
-                int clearComments = projectCache.clearComments();
-                log.info("clear count: " + clearComments);
+                List<Long> clearCommentIdList = projectCache.clearComments();
                 reloadTableData();
+                ApplicationCache.deleteCacheList(clearCommentIdList);
             }
 
         });
-//
+
+        syncConfluenceButton.addActionListener(e -> {
+            System.out.println(Optional.ofNullable(ApplicationCache.getAllDataList())
+                .orElseGet(Lists::newArrayList)
+                .stream()
+                .filter(Objects::nonNull)
+                .map(ReviewCommentInfoModel::toCopyString)
+                .collect(Collectors.toList())
+            );
+        });
+
 //        importButton.addActionListener(e -> {
 //
 //            List<ReviewCommentInfoModel> reviewCommentInfoModels = null;
@@ -279,8 +294,8 @@ public class ManageReviewCommentUI {
                     }
                     InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
                     projectCache.deleteComments(deleteIndentifierList);
+                    ApplicationCache.deleteCacheList(deleteIndentifierList);
                 }
-
                 reloadTableData();
             }
         });

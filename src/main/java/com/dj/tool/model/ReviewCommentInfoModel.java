@@ -1,6 +1,7 @@
 package com.dj.tool.model;
 
 
+import com.google.common.base.Objects;
 import com.intellij.openapi.util.text.StringUtil;
 
 import java.io.Serializable;
@@ -187,6 +188,19 @@ public class ReviewCommentInfoModel implements Serializable {
             ", author='" + author + '\'' +
             ", projectName='" + projectName + '\'' +
             '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ReviewCommentInfoModel)) return false;
+        ReviewCommentInfoModel that = (ReviewCommentInfoModel) o;
+        return getIdentifier() == that.getIdentifier() && getStartLine() == that.getStartLine() && getEndLine() == that.getEndLine() && Objects.equal(getReviewer(), that.getReviewer()) && Objects.equal(getComments(), that.getComments()) && Objects.equal(getFilePath(), that.getFilePath()) && Objects.equal(getLineRange(), that.getLineRange()) && Objects.equal(getContent(), that.getContent()) && Objects.equal(getAuthor(), that.getAuthor()) && Objects.equal(getType(), that.getType()) && Objects.equal(getSeverity(), that.getSeverity()) && Objects.equal(getFactor(), that.getFactor()) && Objects.equal(getDateTime(), that.getDateTime()) && Objects.equal(getProjectName(), that.getProjectName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getIdentifier(), getReviewer(), getComments(), getFilePath(), getLineRange(), getStartLine(), getEndLine(), getContent(), getAuthor(), getType(), getSeverity(), getFactor(), getDateTime(), getProjectName());
     }
 
     public String toCopyString() {

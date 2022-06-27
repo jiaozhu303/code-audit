@@ -2,10 +2,6 @@ package com.dj.tool.model;
 
 public class CodeAuditSettingModel {
 
-    public static final String URL_KEY = "code_audit_key_url";
-    public static final String USER_KEY = "code_audit_key_user_name";
-    public static final String PASSWORD_KEY = "code_audit_key_password";
-
     private String url;
     private String userName;
     private String password;

@@ -17,4 +17,9 @@ public class Constants {
 
     public static final String REVIEWER = "reviewer";
 
+    public static final String SETTING_URL_KEY = "code_audit_key_url";
+    public static final String SETTING_USER_KEY = "code_audit_key_user_name";
+    public static final String SETTING_PASSWORD_KEY = "code_audit_key_password";
+
+
 }

@@ -1,6 +1,7 @@
 package com.dj.tool.ui;
 
 
+import com.dj.tool.common.ApplicationCache;
 import com.dj.tool.common.CommonUtil;
 import com.dj.tool.common.InnerProjectCache;
 import com.dj.tool.common.ProjectInstanceManager;
@@ -55,6 +56,7 @@ public class AddReviewCommentUI {
             InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(project.getLocationHash());
             projectCache.addNewComment(model);
             CommonUtil.reloadCommentListShow(project);
+            ApplicationCache.addOneToCache(model);
             dialog.dispose();
         });
 

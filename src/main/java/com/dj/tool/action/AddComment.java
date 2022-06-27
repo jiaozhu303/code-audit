@@ -25,7 +25,6 @@ import static com.dj.tool.common.Constants.TYPE_QUESTION;
 
 public class AddComment extends AnAction {
 
-
     @Override
     public void actionPerformed(AnActionEvent e) {
         //获取当前类文件的路径
@@ -57,7 +56,6 @@ public class AddComment extends AnAction {
         int startLine = document.getLineNumber(selectionModel.getSelectionStart());
         int endLine = document.getLineNumber(selectionModel.getSelectionEnd());
 
-
         ReviewCommentInfoModel model = new ReviewCommentInfoModel();
         model.setComments("");
         model.setStartLine(startLine);
@@ -69,7 +67,6 @@ public class AddComment extends AnAction {
         long currentTimeMillis = System.currentTimeMillis();
         model.setIdentifier(currentTimeMillis);
         model.setDateTime(DateTimeUtil.time2String(currentTimeMillis));
-
 
         String locationHash = project.getLocationHash();
         InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(locationHash);
@@ -91,8 +88,6 @@ public class AddComment extends AnAction {
             model.setFactor(FACTOR_BASIC);
         }
 
-
-        //显示对话框
         AddReviewCommentUI.showDialog(model, project);
     }
 

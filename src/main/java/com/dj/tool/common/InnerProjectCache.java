@@ -3,13 +3,17 @@ package com.dj.tool.common;
 import com.dj.tool.model.CodeReviewCommentCache;
 import com.dj.tool.model.ReviewCommentInfoModel;
 import com.dj.tool.ui.ManageReviewCommentUI;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.intellij.openapi.project.Project;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * project内需要使用的缓存对象
@@ -134,18 +138,24 @@ public class InnerProjectCache {
         return deleteCount;
     }
 
-    public int clearComments() {
+    public List<Long> clearComments() {
         Map<Long, ReviewCommentInfoModel> comments = cacheData.getComments();
         if (comments == null || comments.isEmpty()) {
-            return 0;
+            return Lists.newArrayList();
         }
 
-        int size = comments.size();
+        List<Long> collect = Optional.ofNullable(comments).orElseGet(Maps::newHashMap).values()
+            .stream()
+            .map(ReviewCommentInfoModel::getIdentifier)
+            .collect(Collectors.toList());
+
+
         comments.clear();
 
         DataPersistentUtil.serialize(cacheData, this.project);
-        return size;
+        return collect;
     }
+
 
     public ManageReviewCommentUI getManageReviewCommentUI() {
         return manageReviewCommentUI;
