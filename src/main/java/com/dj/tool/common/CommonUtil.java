@@ -1,18 +1,18 @@
 package com.dj.tool.common;
 
-import com.dj.tool.ui.ManageReviewCommentUI;
+import com.dj.tool.model.ReviewCommentInfoModel;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowManager;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 
 public class CommonUtil {
-
-    private static final Logger log = Logger.getInstance(CommonUtil.class);
 
     public static void closeQuitely(Closeable closeable) {
         if (closeable == null) {
@@ -26,21 +26,22 @@ public class CommonUtil {
         }
     }
 
-    public synchronized static void reloadCommentListShow(Project project) {
-        try {
-            InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(project.getLocationHash());
-
-            ManageReviewCommentUI manageReviewCommentUI = projectCache.getManageReviewCommentUI();
-            ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow("CodeRecord");
-
-            if (manageReviewCommentUI != null && toolWindow != null) {
-                manageReviewCommentUI.refreshTableDataShow();
-            } else {
-                log.info("manageReviewCommentUI = " + manageReviewCommentUI);
-                log.info("toolWindow = " + toolWindow);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+    public static String copyToString(List<ReviewCommentInfoModel> cachedComments) {
+        return Optional.ofNullable(cachedComments).orElseGet(ArrayList::new)
+            .stream()
+            .map(ReviewCommentInfoModel::toCopyString)
+            .reduce("", (a, b) -> a + b);
     }
+
+    private static final ThreadLocal<SimpleDateFormat> SDF = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+
+    public static String time2String(long millis) {
+        return SDF.get().format(new Date(millis));
+    }
+
+    public static String getFormattedTimeForFileName() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        return simpleDateFormat.format(new Date());
+    }
+
 }

@@ -1,9 +1,7 @@
 package com.dj.tool.action;
 
-import com.dj.tool.common.DateTimeUtil;
+import com.dj.tool.common.CommonUtil;
 import com.dj.tool.common.GitOperationUtil;
-import com.dj.tool.common.InnerProjectCache;
-import com.dj.tool.common.ProjectInstanceManager;
 import com.dj.tool.model.ReviewCommentInfoModel;
 import com.dj.tool.ui.AddReviewCommentUI;
 import com.intellij.codeInsight.daemon.OutsidersPsiFileSupport;
@@ -66,27 +64,11 @@ public class AddComment extends AnAction {
         model.setFilePath(fileName);
         long currentTimeMillis = System.currentTimeMillis();
         model.setIdentifier(currentTimeMillis);
-        model.setDateTime(DateTimeUtil.time2String(currentTimeMillis));
-
-        String locationHash = project.getLocationHash();
-        InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(locationHash);
-        if (projectCache == null) {
-            projectCache = new InnerProjectCache(project);
-            ProjectInstanceManager.getInstance().addProjectCache(locationHash, projectCache);
-        }
-
-        ReviewCommentInfoModel lastCommentModel = projectCache.getLastCommentModel();
-        if (lastCommentModel != null) {
-            model.setReviewer(lastCommentModel.getReviewer());
-            model.setType(lastCommentModel.getType());
-            model.setSeverity(lastCommentModel.getSeverity());
-            model.setFactor(lastCommentModel.getFactor());
-        } else {
-            model.setReviewer(REVIEWER);
-            model.setType(TYPE_QUESTION);
-            model.setSeverity(SEVERITY_GENERAL);
-            model.setFactor(FACTOR_BASIC);
-        }
+        model.setDateTime(CommonUtil.time2String(currentTimeMillis));
+        model.setReviewer(REVIEWER);
+        model.setType(TYPE_QUESTION);
+        model.setSeverity(SEVERITY_GENERAL);
+        model.setFactor(FACTOR_BASIC);
 
         AddReviewCommentUI.showDialog(model, project);
     }

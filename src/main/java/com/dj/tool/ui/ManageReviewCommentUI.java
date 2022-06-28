@@ -1,14 +1,13 @@
 package com.dj.tool.ui;
 
 import com.dj.tool.common.ApplicationCache;
-import com.dj.tool.common.CopyOperateUtil;
-import com.dj.tool.common.DateTimeUtil;
+import com.dj.tool.common.CommonUtil;
 import com.dj.tool.common.ExcelOperateUtil;
-import com.dj.tool.common.InnerProjectCache;
-import com.dj.tool.common.ProjectInstanceManager;
+import com.dj.tool.common.ProjectCache;
 import com.dj.tool.model.CommentTableModel;
 import com.dj.tool.model.ReviewCommentInfoModel;
 import com.dj.tool.render.CommentTableCellRender;
+import com.dj.tool.service.CodeAuditSettingProjectService;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.Project;
@@ -45,15 +44,18 @@ public class ManageReviewCommentUI {
     private JButton clearButton;
     private JButton deleteButton;
     private JButton exportButton;
-    //    private JButton importButton;
     private JTable commentTable;
     public JPanel fullPanel;
     private JButton copyButton;
     private JButton syncConfluenceButton;
     private final Project project;
 
+    private List<ReviewCommentInfoModel> tableData;
+
     public ManageReviewCommentUI(Project project) {
         this.project = project;
+        CodeAuditSettingProjectService projectCache = ProjectCache.getInstance(project);
+        this.tableData = projectCache.getProjectAllData();
     }
 
 
@@ -63,15 +65,11 @@ public class ManageReviewCommentUI {
         bindTableListeners();
     }
 
-    public void refreshTableDataShow() {
-        reloadTableData();
-    }
-
-    private void reloadTableData() {
-        InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
-        List<ReviewCommentInfoModel> cachedComments = projectCache.getCachedComments();
+    public void reloadTableData() {
+        CodeAuditSettingProjectService projectCache = ProjectCache.getInstance(project);
+        this.tableData = projectCache.getProjectAllData();
         List<Object[]> rowDataList = new ArrayList<>();
-        for (ReviewCommentInfoModel model : cachedComments) {
+        for (ReviewCommentInfoModel model : this.tableData) {
             Object[] row = {model.getIdentifier(), model.getReviewer(), model.getComments(), model.getAuthor(), model.getType(),
                 model.getSeverity(), model.getFactor(), model.getProjectName(), model.getFilePath(), model.getLineRange(), model.getContent(),
                 model.getDateTime()
@@ -124,8 +122,8 @@ public class ManageReviewCommentUI {
                 model.setType(type);
                 model.setSeverity(severity);
                 model.setFactor(factor);
-                InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
-                projectCache.updateCommonColumnContent(model);
+                CodeAuditSettingProjectService projectCache = ProjectCache.getInstance(project);
+                projectCache.updateProjectData(model);
             }
         });
     }
@@ -138,76 +136,16 @@ public class ManageReviewCommentUI {
         commentTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-//                if (e.getClickCount() == 2) {
-//                    int row = ((JTable) e.getSource()).rowAtPoint(e.getPoint());
-//                    int column = ((JTable) e.getSource()).columnAtPoint(e.getPoint());
-//                    if (!commentTable.isCellEditable(row, column)) {
-//                        doubleClickDumpToOriginal(ManageReviewCommentUI.this.project, row, column);
-//                        return;
-//                    }
-//                }
-                // 其它场景，默认的处理方法
                 super.mouseClicked(e);
             }
         });
     }
 
-//    private void doubleClickDumpToOriginal(Project project, int row, int column) {
-//        String filePath = (String) commentTable.getValueAt(row, 8);
-//        String line = (String) commentTable.getValueAt(row, 9);
-//        int startLine = 0;
-//        try {
-//            if (filePath == null || line == null) {
-//                throw new Exception("filePath or line is null");
-//            }
-//
-//            String[] lines = line.split("~");
-//            if (lines.length != 2) {
-//                throw new Exception("line format illegal");
-//            }
-//
-//            startLine = Integer.parseInt(lines[0].trim()) - 1;
-//            if (startLine < 0) {
-//                startLine = 0;
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            Messages.showErrorDialog("open failed! Cause:" + System.lineSeparator() + e.getMessage(), "Open Failed");
-//            return;
-//        }
-//
-//        PsiFile[] filesByName = PsiShortNamesCache.getInstance(project).getFilesByName(filePath);
-//        if (filesByName.length > 0) {
-//            PsiFile psiFile = filesByName[0];
-//            VirtualFile virtualFile = psiFile.getVirtualFile();
-//            // 打开对应的文件
-//            OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, virtualFile);
-//            Editor editor = FileEditorManager.getInstance(project).openTextEditor(openFileDescriptor, true);
-//            if (editor == null) {
-//                Messages.showErrorDialog("open failed! Cause:" + System.lineSeparator() + "editor is null", "Open Failed");
-//                return;
-//            }
-//
-//            // 跳转到指定的位置
-//            CaretModel caretModel = editor.getCaretModel();
-//            LogicalPosition logicalPosition = caretModel.getLogicalPosition();
-//            logicalPosition.leanForward(true);
-//            LogicalPosition logical = new LogicalPosition(startLine, logicalPosition.column);
-//            caretModel.moveToLogicalPosition(logical);
-//            SelectionModel selectionModel = editor.getSelectionModel();
-//            selectionModel.selectLineAtCaret();
-//        } else {
-//            Messages.showErrorDialog("open failed! Cause:" + System.lineSeparator() + "not found file in current project", "Open Failed");
-//        }
-//
-//    }
-
     private void bindButtons() {
 
         copyButton.addActionListener(e -> {
             try {
-                InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
-                String copyData = CopyOperateUtil.copyToString(projectCache.getCachedComments());
+                String copyData = CommonUtil.copyToString(this.tableData);
                 Messages.showMessageDialog("Copy successfully!", "Copy Finished", Icons.EXPORT_ICON);
                 CopyPasteManager.getInstance()
                     .setContents(new TextTransferable(copyData));
@@ -220,8 +158,12 @@ public class ManageReviewCommentUI {
         clearButton.addActionListener(e -> {
 
             if (new ClearConfirmDialog().showAndGet()) {
-                InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
-                List<Long> clearCommentIdList = projectCache.clearComments();
+                List<Long> clearCommentIdList = Optional.ofNullable(this.tableData).orElseGet(Lists::newArrayList)
+                    .stream()
+                        .map(ReviewCommentInfoModel::getIdentifier)
+                            .collect(Collectors.toList());
+                CodeAuditSettingProjectService projectCache = ProjectCache.getInstance(project);
+                projectCache.cleanAllData();
                 reloadTableData();
                 ApplicationCache.deleteCacheList(clearCommentIdList);
             }
@@ -238,31 +180,9 @@ public class ManageReviewCommentUI {
             );
         });
 
-//        importButton.addActionListener(e -> {
-//
-//            List<ReviewCommentInfoModel> reviewCommentInfoModels = null;
-//            try {
-//                JFileChooser fileChooser = new JFileChooser();
-//                int saveDialog = fileChooser.showOpenDialog(fullPanel);
-//                if (saveDialog == JFileChooser.APPROVE_OPTION) {
-//                    String importPath = fileChooser.getSelectedFile().getPath();
-//
-//                    reviewCommentInfoModels = ExcelOperateUtil.importExcel(importPath);
-//                    InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
-//                    projectCache.importComments(reviewCommentInfoModels);
-//                    CommonUtil.reloadCommentListShow(ManageReviewCommentUI.this.project);
-//                    Messages.showMessageDialog("Import successfully!", "Import Finished", Icons.IMPORT_ICON);
-//                }
-//            } catch (Exception ex) {
-//                ex.printStackTrace();
-//                Messages.showErrorDialog("import failed! Cause:" + System.lineSeparator() + ex.getMessage(), "Export Failed");
-//            }
-//        });
-
-
         exportButton.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setSelectedFile(new File("[" + this.project.getName() + "]_code_review_report_" + DateTimeUtil.getFormattedTimeForFileName()));
+            fileChooser.setSelectedFile(new File("[" + this.project.getName() + "]_code_review_report_" + CommonUtil.getFormattedTimeForFileName()));
             fileChooser.setFileFilter(new FileNameExtensionFilter("Excel表格(*.xlsx)", ".xlsx"));
             int saveDialog = fileChooser.showSaveDialog(fullPanel);
             if (saveDialog == JFileChooser.APPROVE_OPTION) {
@@ -272,8 +192,7 @@ public class ManageReviewCommentUI {
                 }
 
                 try {
-                    InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
-                    ExcelOperateUtil.exportExcel(path, projectCache.getCachedComments());
+                    ExcelOperateUtil.exportExcel(path, this.tableData);
                     Messages.showMessageDialog("Export successfully!", "Export Finished", Icons.EXPORT_ICON);
                 } catch (Exception ex) {
                     Messages.showErrorDialog("export failed! Cause:" + System.lineSeparator() + ex.getMessage(), "Export Failed");
@@ -292,7 +211,8 @@ public class ManageReviewCommentUI {
                         Long valueAt = (Long) commentTable.getValueAt(rowId, 0);
                         deleteIndentifierList.add(valueAt);
                     }
-                    InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
+
+                    CodeAuditSettingProjectService projectCache = ProjectCache.getInstance(project);
                     projectCache.deleteComments(deleteIndentifierList);
                     ApplicationCache.deleteCacheList(deleteIndentifierList);
                 }

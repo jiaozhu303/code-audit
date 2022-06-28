@@ -79,8 +79,6 @@ public class ExcelOperateUtil {
         FileOutputStream fileOutputStream = null;
         XSSFWorkbook workbook = null;
         try {
-//            copyFile(templateFile, destFile);
-
             xlsFile = ExcelOperateUtil.class.getClassLoader().getResourceAsStream("code-review-result.xlsx");
             // 获得工作簿对象
             workbook = new XSSFWorkbook(xlsFile);

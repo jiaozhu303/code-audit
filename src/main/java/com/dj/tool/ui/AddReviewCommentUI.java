@@ -2,10 +2,10 @@ package com.dj.tool.ui;
 
 
 import com.dj.tool.common.ApplicationCache;
-import com.dj.tool.common.CommonUtil;
-import com.dj.tool.common.InnerProjectCache;
-import com.dj.tool.common.ProjectInstanceManager;
+import com.dj.tool.common.ProjectCache;
+import com.dj.tool.common.ReviewManagerUtil;
 import com.dj.tool.model.ReviewCommentInfoModel;
+import com.dj.tool.service.CodeAuditSettingProjectService;
 import com.intellij.openapi.project.Project;
 
 import javax.swing.*;
@@ -28,39 +28,39 @@ public class AddReviewCommentUI {
     private JTextField filePathTextField;
     private JTextArea codeContentsTextArea;
     private JTextField lineTextField;
-    private String projectName;
     private JTextField authorTextField;
 
     public static void showDialog(ReviewCommentInfoModel model, Project project) {
 
         JDialog dialog = new JDialog(new JFrame());
         dialog.setTitle("Add Code Audit Record");
-        AddReviewCommentUI reviewCommentUI = new AddReviewCommentUI();
-        reviewCommentUI.reviewerTextField.setText(model.getReviewer());
-        reviewCommentUI.commentsTextArea.setText(model.getComments());
-        reviewCommentUI.codeContentsTextArea.setText(model.getContent());
-        reviewCommentUI.filePathTextField.setText(model.getFilePath());
-        reviewCommentUI.lineTextField.setText(model.getLineRange());
-        reviewCommentUI.authorTextField.setText(model.getAuthor());
-        reviewCommentUI.questionTypeComboBox.setSelectedItem(model.getType());
-        reviewCommentUI.severityComboBox.setSelectedItem(model.getSeverity());
-        reviewCommentUI.triggerFactorComboBox.setSelectedItem(model.getFactor());
-        reviewCommentUI.saveButton.addActionListener(e -> {
-            model.setContent(reviewCommentUI.codeContentsTextArea.getText());
-            model.setComments(reviewCommentUI.commentsTextArea.getText());
-            model.setReviewer(reviewCommentUI.reviewerTextField.getText());
-            model.setAuthor(reviewCommentUI.authorTextField.getText());
-            model.setType(reviewCommentUI.questionTypeComboBox.getSelectedItem().toString());
-            model.setSeverity(reviewCommentUI.severityComboBox.getSelectedItem().toString());
-            model.setFactor(reviewCommentUI.triggerFactorComboBox.getSelectedItem().toString());
-            InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(project.getLocationHash());
-            projectCache.addNewComment(model);
-            CommonUtil.reloadCommentListShow(project);
+        AddReviewCommentUI addComment = new AddReviewCommentUI();
+        addComment.reviewerTextField.setText(model.getReviewer());
+        addComment.commentsTextArea.setText(model.getComments());
+        addComment.codeContentsTextArea.setText(model.getContent());
+        addComment.filePathTextField.setText(model.getFilePath());
+        addComment.lineTextField.setText(model.getLineRange());
+        addComment.authorTextField.setText(model.getAuthor());
+        addComment.questionTypeComboBox.setSelectedItem(model.getType());
+        addComment.severityComboBox.setSelectedItem(model.getSeverity());
+        addComment.triggerFactorComboBox.setSelectedItem(model.getFactor());
+        addComment.saveButton.addActionListener(e -> {
+            model.setContent(addComment.codeContentsTextArea.getText());
+            model.setComments(addComment.commentsTextArea.getText());
+            model.setReviewer(addComment.reviewerTextField.getText());
+            model.setAuthor(addComment.authorTextField.getText());
+            model.setType(addComment.questionTypeComboBox.getSelectedItem().toString());
+            model.setSeverity(addComment.severityComboBox.getSelectedItem().toString());
+            model.setFactor(addComment.triggerFactorComboBox.getSelectedItem().toString());
+            CodeAuditSettingProjectService projectCache = ProjectCache.getInstance(project);
+//            InnerProjectCache projectCache = projectCache;
+            projectCache.addProjectData(model);
+            ReviewManagerUtil.getInstance(project).reloadTableData();
             ApplicationCache.addOneToCache(model);
             dialog.dispose();
         });
 
-        reviewCommentUI.cancelButton.addActionListener(e -> {
+        addComment.cancelButton.addActionListener(e -> {
             dialog.dispose();
         });
 
@@ -69,7 +69,7 @@ public class AddReviewCommentUI {
         int h = (screenSize.height * 95 / 100 - HEIGHT) / 2;
         dialog.setLocation(w, h);
 
-        dialog.setContentPane(reviewCommentUI.addReviewCommentPanel);
+        dialog.setContentPane(addComment.addReviewCommentPanel);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.pack();
         dialog.setVisible(true);

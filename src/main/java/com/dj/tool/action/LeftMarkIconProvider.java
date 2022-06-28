@@ -1,7 +1,8 @@
 package com.dj.tool.action;
 
-import com.dj.tool.common.InnerProjectCache;
-import com.dj.tool.common.ProjectInstanceManager;
+import com.dj.tool.common.ProjectCache;
+import com.dj.tool.model.ReviewCommentInfoModel;
+import com.dj.tool.service.CodeAuditSettingProjectService;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
@@ -15,6 +16,7 @@ import icons.MyIcons;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.List;
 
 
 public class LeftMarkIconProvider extends RelatedItemLineMarkerProvider {
@@ -51,11 +53,13 @@ public class LeftMarkIconProvider extends RelatedItemLineMarkerProvider {
 
             // currentLine统一用endLine来处理，标准化所有处理场景，避免换行的场景，上下都被匹配上了
             int currentLine = endLineNumber - 1;
-            InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(project.getLocationHash());
-            if (projectCache != null) {
+            CodeAuditSettingProjectService projectCache = ProjectCache.getInstance(project);
+
+            List<ReviewCommentInfoModel> projectAllData = projectCache.getProjectAllData();
+            if (projectAllData != null) {
                 String path = element.getContainingFile().getVirtualFile().getName();
 
-                String comment = projectCache.getCommentInfo(path, currentLine);
+                String comment = getCommentInfo(path, currentLine, projectAllData);
                 if (comment != null) {
                     NavigationGutterIconBuilder<PsiElement> builder = NavigationGutterIconBuilder.create(MyIcons.EditorQuestion);
                     builder.setTarget(element);
@@ -67,5 +71,16 @@ public class LeftMarkIconProvider extends RelatedItemLineMarkerProvider {
         }
 
         super.collectNavigationMarkers(element, result);
+    }
+
+    public String getCommentInfo(String filePath, int currentLine, List<ReviewCommentInfoModel> dataList) {
+        String result = null;
+        for (ReviewCommentInfoModel entry : dataList) {
+            if (entry.getFilePath().contains(filePath) && (currentLine >= entry.getStartLine() && currentLine <= entry.getEndLine())) {
+                result = entry.getComments();
+                break;
+            }
+        }
+        return result;
     }
 }

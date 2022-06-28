@@ -1,27 +1,38 @@
 package com.dj.tool.service;
 
-import com.dj.tool.model.CodeReviewCommentCache;
+import com.dj.tool.model.ReviewCommentInfoModel;
+import com.google.common.collect.Lists;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.XmlSerializerUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @State(name = "CodeAuditSettingProjectService",
     storages = {
         @Storage(value = "CodeAuditSettingProjectService.xml")
     }
 )
-public final class CodeAuditSettingProjectService implements PersistentStateComponent<Map<String, CodeReviewCommentCache>> {
+public final class CodeAuditSettingProjectService implements PersistentStateComponent<List<ReviewCommentInfoModel>> {
+
+    private List<ReviewCommentInfoModel> projectDataList = Lists.newArrayList();
 
 
-    private Map<String, CodeReviewCommentCache> projectData = new HashMap<>();
+    public List<ReviewCommentInfoModel> getProjectDataList() {
+        return projectDataList;
+    }
+
+    public void setProjectDataList(List<ReviewCommentInfoModel> projectDataList) {
+        this.projectDataList = projectDataList;
+    }
 
     /**
      * @return a component state. All properties, public and annotated fields are serialized. Only values, which differ
@@ -31,8 +42,8 @@ public final class CodeAuditSettingProjectService implements PersistentStateComp
      */
     @Nullable
     @Override
-    public Map<String, CodeReviewCommentCache> getState() {
-        return projectData;
+    public List<ReviewCommentInfoModel> getState() {
+        return projectDataList;
     }
 
     /**
@@ -45,8 +56,8 @@ public final class CodeAuditSettingProjectService implements PersistentStateComp
      * @see XmlSerializerUtil#copyBean(Object, Object)
      */
     @Override
-    public void loadState(@NotNull Map<String, CodeReviewCommentCache> state) {
-        projectData = state;
+    public void loadState(@NotNull List<ReviewCommentInfoModel> state) {
+        projectDataList = state;
     }
 
     public static CodeAuditSettingProjectService getInstance(Project project) {
@@ -54,14 +65,38 @@ public final class CodeAuditSettingProjectService implements PersistentStateComp
         return project.getService(CodeAuditSettingProjectService.class);
     }
 
-    public CodeReviewCommentCache getProjectData(String cacheId) {
-        return this.projectData.getOrDefault(cacheId, new CodeReviewCommentCache());
+    public List<ReviewCommentInfoModel> getProjectAllData() {
+        return this.projectDataList;
     }
 
-    public void setProjectData(String cacheId, CodeReviewCommentCache data) {
-        if (this.projectData == null) {
-            this.projectData = new HashMap<>();
+    public void addProjectData(ReviewCommentInfoModel data) {
+        if (this.projectDataList == null) {
+            this.projectDataList = Lists.newArrayList();
         }
-        this.projectData.put(cacheId, data);
+        this.projectDataList.add(data);
+    }
+
+    public void deleteComments(List<Long> idList) {
+        if (CollectionUtils.isEmpty(idList)) {
+            return;
+        }
+        this.projectDataList = Optional.ofNullable(this.projectDataList).orElseGet(Lists::newArrayList)
+            .stream()
+            .filter(data -> !idList.contains(data.getIdentifier()))
+            .collect(Collectors.toList());
+    }
+
+    public void cleanAllData() {
+        this.projectDataList = Lists.newArrayList();
+    }
+
+    public void updateProjectData(ReviewCommentInfoModel model) {
+        Optional.ofNullable(this.projectDataList).orElseGet(Lists::newArrayList)
+            .stream()
+            .forEach(data -> {
+                if (data.getIdentifier() == model.getIdentifier()) {
+                    data = model;
+                }
+            });
     }
 }
