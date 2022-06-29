@@ -1,6 +1,6 @@
 package com.dj.tool.action;
 
-import com.dj.tool.common.ReviewManagerUtil;
+import com.dj.tool.common.ReviewManagerFactory;
 import com.dj.tool.ui.ManageReviewCommentUI;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
@@ -16,7 +16,7 @@ public class ManageReviewComment implements ToolWindowFactory {
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
 
-        ManageReviewCommentUI manageReviewCommentUI = ReviewManagerUtil.getInstance(project);
+        ManageReviewCommentUI manageReviewCommentUI = ReviewManagerFactory.getInstance(project);
         manageReviewCommentUI.initUI();
 
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();

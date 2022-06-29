@@ -3,7 +3,7 @@ package com.dj.tool.ui;
 
 import com.dj.tool.common.ApplicationCache;
 import com.dj.tool.common.ProjectCache;
-import com.dj.tool.common.ReviewManagerUtil;
+import com.dj.tool.common.ReviewManagerFactory;
 import com.dj.tool.model.ReviewCommentInfoModel;
 import com.dj.tool.service.CodeAuditSettingProjectService;
 import com.intellij.openapi.project.Project;
@@ -53,9 +53,8 @@ public class AddReviewCommentUI {
             model.setSeverity(addComment.severityComboBox.getSelectedItem().toString());
             model.setFactor(addComment.triggerFactorComboBox.getSelectedItem().toString());
             CodeAuditSettingProjectService projectCache = ProjectCache.getInstance(project);
-//            InnerProjectCache projectCache = projectCache;
             projectCache.addProjectData(model);
-            ReviewManagerUtil.getInstance(project).reloadTableData();
+            ReviewManagerFactory.getInstance(project).reloadTableData();
             ApplicationCache.addOneToCache(model);
             dialog.dispose();
         });

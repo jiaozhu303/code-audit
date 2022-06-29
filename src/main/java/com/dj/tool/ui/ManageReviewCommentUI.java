@@ -1,8 +1,10 @@
 package com.dj.tool.ui;
 
+import com.arronlong.httpclientutil.exception.HttpProcessException;
 import com.dj.tool.common.ApplicationCache;
 import com.dj.tool.common.CommonUtil;
 import com.dj.tool.common.ExcelOperateUtil;
+import com.dj.tool.common.HttpRequestFactory;
 import com.dj.tool.common.ProjectCache;
 import com.dj.tool.model.CommentTableModel;
 import com.dj.tool.model.ReviewCommentInfoModel;
@@ -178,6 +180,11 @@ public class ManageReviewCommentUI {
                 .map(ReviewCommentInfoModel::toCopyString)
                 .collect(Collectors.toList())
             );
+//            try {
+//                HttpRequestFactory.sendDataToConf("zhaodj5", "daDI@lenovo", "cr-01", "PPC", "172484093", "<H1>no title here~</H1>");
+//            } catch (HttpProcessException ex) {
+//                throw new RuntimeException(ex);
+//            }
         });
 
         exportButton.addActionListener(e -> {
