@@ -2,6 +2,13 @@ package com.dj.tool.common;
 
 public class Constants {
 
+    public static final String MIME_TYPE_APPLICATION_JSON = "application/json";
+    public static final String HEADER_NAME_CONTENT_TYPE = "Content-Type";
+    public static final String HEADER_NAME_AUTHORIZATION = "Authorization";
+    public static final String BASIC_AUTH_PREFIX = "Basic ";
+    public static final int CONNECTION_REQUEST_TIMEOUT = 10000;
+    public static final int SOCKET_TIMEOUT = 5000;
+    public static final int CONNECT_TIMEOUT = 2000;
     public static String TYPE_QUESTION = "Question";
     public static String TYPE_ADVICE = "Advice";
     public static String TYPE_ALLEGATIONS = "Allegations";

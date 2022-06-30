@@ -27,7 +27,9 @@ repositories {
 dependencies {
     implementation("org.apache.poi:poi:4.1.0")
     implementation("org.apache.poi:poi-ooxml:4.1.0")
-    implementation("com.arronlong:httpclientutil:1.0.4")
+    implementation("org.apache.httpcomponents:httpclient:4.4.1")
+    implementation("org.apache.httpcomponents:httpmime:4.4.1")
+    implementation("org.apache.httpcomponents:httpasyncclient:4.1")
 }
 // Configure Gradle IntelliJ Plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
 intellij {

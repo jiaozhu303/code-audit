@@ -1,6 +1,5 @@
 package com.dj.tool.ui;
 
-import com.arronlong.httpclientutil.exception.HttpProcessException;
 import com.dj.tool.common.ApplicationCache;
 import com.dj.tool.common.CommonUtil;
 import com.dj.tool.common.ExcelOperateUtil;
@@ -162,8 +161,8 @@ public class ManageReviewCommentUI {
             if (new ClearConfirmDialog().showAndGet()) {
                 List<Long> clearCommentIdList = Optional.ofNullable(this.tableData).orElseGet(Lists::newArrayList)
                     .stream()
-                        .map(ReviewCommentInfoModel::getIdentifier)
-                            .collect(Collectors.toList());
+                    .map(ReviewCommentInfoModel::getIdentifier)
+                    .collect(Collectors.toList());
                 CodeAuditSettingProjectService projectCache = ProjectCache.getInstance(project);
                 projectCache.cleanAllData();
                 reloadTableData();
@@ -180,11 +179,12 @@ public class ManageReviewCommentUI {
                 .map(ReviewCommentInfoModel::toCopyString)
                 .collect(Collectors.toList())
             );
-//            try {
-//                HttpRequestFactory.sendDataToConf("zhaodj5", "daDI@lenovo", "cr-01", "PPC", "172484093", "<H1>no title here~</H1>");
-//            } catch (HttpProcessException ex) {
-//                throw new RuntimeException(ex);
-//            }
+            try {//"<form><input type='checkbox'>test-01<br/><input type='checkbox'>test-02<br/><input type='checkbox'>test-03<br/></form>"
+                HttpRequestFactory.sendDataToConf("zhaodj5", "daDI@lenovo", "cr-01", "PPC", "172484093",
+                    "<h1>test context</h1>");
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         });
 
         exportButton.addActionListener(e -> {

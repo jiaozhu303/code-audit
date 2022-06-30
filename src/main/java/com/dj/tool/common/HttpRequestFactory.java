@@ -1,19 +1,26 @@
 package com.dj.tool.common;
 
-import com.arronlong.httpclientutil.HttpClientUtil;
-import com.arronlong.httpclientutil.common.HttpConfig;
-import com.arronlong.httpclientutil.common.HttpHeader;
-import com.arronlong.httpclientutil.exception.HttpProcessException;
 import com.google.common.collect.Lists;
-import org.apache.http.Header;
-import org.jetbrains.annotations.NotNull;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.http.util.EntityUtils;
 
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
+import java.io.IOException;
 import java.security.KeyManagementException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,29 +29,29 @@ public class HttpRequestFactory {
 
     private static final String url = "https://km.xpaas.lenovo.com/rest/api/content";
 
-    public static void sendDataToConf(String userName, String password, String title, String spaceKey, String parentId, String htmlBody) throws HttpProcessException {
+    private static SSLContext sslcontext;
+    private static NoopHostnameVerifier verifier;
+    private static SSLConnectionSocketFactory sslConnectionSocketFactory;
 
-        String authorization = "Basic " +
-            Base64.getUrlEncoder().encodeToString((userName + ":" + password).getBytes());
-
-        Header[] headers = HttpHeader.custom()
-            .authorization(authorization)
-            .other("Content-Type", "application/json")
-            .build();
-
-        Map<String, Object> map = buildParam(title, spaceKey, parentId, htmlBody);
-
-        HttpConfig config = HttpConfig.custom()
-            .headers(headers)
-            .url(url)
-            .json(JsonUtils.toJson(map))
-            .encoding("utf-8");
-
-        String post = HttpClientUtil.post(config);
-        System.out.println("post：" + post);
+    static {
+        try {
+            sslcontext = new SSLContextBuilder().loadTrustMaterial(null, (china, authType) -> true).build();
+            verifier = NoopHostnameVerifier.INSTANCE;
+            sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslcontext, verifier);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } catch (KeyManagementException e) {
+            throw new RuntimeException(e);
+        } catch (KeyStoreException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    @NotNull
+    public static void sendDataToConf(String userName, String password, String title, String spaceKey, String parentId, String htmlBody) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException {
+        Map<String, Object> map = buildParam(title, spaceKey, parentId, htmlBody);
+        send(url, map, "UTF-8", userName, password);
+    }
+
     private static HashMap<String, Object> buildParam(String title, String spaceKey, String parentId, String htmlBody) {
         HashMap<String, Object> param = new HashMap<>();
 
@@ -70,31 +77,66 @@ public class HttpRequestFactory {
         return param;
     }
 
-    public static SSLContext createIgnoreVerifySSL() throws NoSuchAlgorithmException, KeyManagementException {
-        SSLContext sc = SSLContext.getInstance("SSLv3");
+    public static String send(String url, Map<String, Object> map, String encoding, String userName, String password) throws KeyManagementException, NoSuchAlgorithmException, ClientProtocolException, IOException, KeyStoreException {
+        String body = "";
 
-        // 实现一个X509TrustManager接口，用于绕过验证，不用修改里面的方法
-        X509TrustManager trustManager = new X509TrustManager() {
-            @Override
-            public void checkClientTrusted(
-                java.security.cert.X509Certificate[] paramArrayOfX509Certificate,
-                String paramString) throws CertificateException {
+        //绕过证书验证，处理https请求
+//        SSLContext sslcontext = new SSLContextBuilder().loadTrustMaterial(null, (china, authType) -> true).build();
+//        NoopHostnameVerifier verifier = NoopHostnameVerifier.INSTANCE;
+//        SSLConnectionSocketFactory sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslcontext, verifier);
+
+        PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
+        connManager.setMaxTotal(2);
+        connManager.setDefaultMaxPerRoute(2);
+
+        RequestConfig requestConfig = RequestConfig.custom()
+            .setAuthenticationEnabled(true)
+            .setConnectionRequestTimeout(Constants.CONNECTION_REQUEST_TIMEOUT)
+            .setSocketTimeout(Constants.SOCKET_TIMEOUT)
+            .setConnectTimeout(Constants.CONNECT_TIMEOUT)
+            .setRedirectsEnabled(false)
+            .setCookieSpec(CookieSpecs.STANDARD)
+            .build();
+
+        CloseableHttpClient client = HttpClients.custom()
+            .setConnectionManager(connManager)
+            .setDefaultRequestConfig(requestConfig)
+            .setSSLSocketFactory(sslConnectionSocketFactory)
+            .build();
+
+        //创建post方式请求对象
+        HttpPost httpPost = new HttpPost(url);
+
+        httpPost.setEntity(new StringEntity(JsonUtils.toJson(map), Constants.MIME_TYPE_APPLICATION_JSON, encoding));
+
+        String authorization = Constants.BASIC_AUTH_PREFIX +
+            Base64.getUrlEncoder().encodeToString((userName + ":" + password).getBytes());
+        //设置header信息
+        //指定报文头【Content-type】、【User-Agent】
+        httpPost.setHeader(Constants.HEADER_NAME_CONTENT_TYPE, Constants.MIME_TYPE_APPLICATION_JSON);
+        httpPost.setHeader(Constants.HEADER_NAME_AUTHORIZATION, authorization);
+
+        try {
+            //执行请求操作，并拿到结果（同步阻塞）
+            CloseableHttpResponse response = client.execute(httpPost);
+
+            //获取结果实体
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                //按指定编码转换结果实体为String类型
+                body = EntityUtils.toString(entity, encoding);
             }
-
-            @Override
-            public void checkServerTrusted(
-                java.security.cert.X509Certificate[] paramArrayOfX509Certificate,
-                String paramString) throws CertificateException {
-            }
-
-            @Override
-            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                return null;
-            }
-        };
-
-        sc.init(null, new TrustManager[]{trustManager}, null);
-        return sc;
+            EntityUtils.consume(entity);
+            //释放链接
+            response.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("execute network request error~");
+        } finally {
+            client.close();
+            connManager.close();
+        }
+        return body;
     }
 
 }

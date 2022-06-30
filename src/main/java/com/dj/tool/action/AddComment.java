@@ -59,7 +59,8 @@ public class AddComment extends AnAction {
         model.setStartLine(startLine);
         model.setEndLine(endLine);
         model.setContent(selectedText);
-        model.setAuthor(GitOperationUtil.getAnnotateAuthor(project, virtualFile, startLine, isOutsiderFile));
+//        model.setAuthor(GitOperationUtil.getAnnotateAuthor(project, virtualFile, startLine, isOutsiderFile));
+        model.setAuthor("");
         model.setProjectName(project.getName());
         model.setFilePath(fileName);
         long currentTimeMillis = System.currentTimeMillis();
