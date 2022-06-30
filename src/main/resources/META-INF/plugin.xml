@@ -29,7 +29,11 @@
   ]]>
     </description>
 
-    <change-notes>refactor project for compatibility.</change-notes>
+    <change-notes>
+        1.refactor project for compatibility.
+        2.update persistent design
+        3.sync data to confluence design
+    </change-notes>
 
     <depends>com.intellij.modules.platform</depends>
 
