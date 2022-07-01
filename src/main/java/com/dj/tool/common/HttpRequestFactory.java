@@ -1,6 +1,7 @@
 package com.dj.tool.common;
 
 import com.google.common.collect.Lists;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.config.CookieSpecs;
@@ -27,8 +28,6 @@ import java.util.Map;
 
 public class HttpRequestFactory {
 
-    private static final String url = "https://km.xpaas.lenovo.com/rest/api/content";
-
     private static SSLContext sslcontext;
     private static NoopHostnameVerifier verifier;
     private static SSLConnectionSocketFactory sslConnectionSocketFactory;
@@ -47,9 +46,9 @@ public class HttpRequestFactory {
         }
     }
 
-    public static void sendDataToConf(String userName, String password, String title, String spaceKey, String parentId, String htmlBody) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException {
+    public static void sendDataToConf(String apiURL, String userName, String password, String title, String spaceKey, String parentId, String htmlBody) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException {
         Map<String, Object> map = buildParam(title, spaceKey, parentId, htmlBody);
-        send(url, map, "UTF-8", userName, password);
+        send(apiURL, map, Constants.CHARSET_UTF_8, userName, password);
     }
 
     private static HashMap<String, Object> buildParam(String title, String spaceKey, String parentId, String htmlBody) {

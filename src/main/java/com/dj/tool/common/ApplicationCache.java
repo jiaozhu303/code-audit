@@ -10,6 +10,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+import static com.dj.tool.common.Constants.SETTING_CONF_PARENT_DIR_ID;
+import static com.dj.tool.common.Constants.SETTING_CONF_SPACE_KEY;
 import static com.dj.tool.common.Constants.SETTING_PASSWORD_KEY;
 import static com.dj.tool.common.Constants.SETTING_URL_KEY;
 import static com.dj.tool.common.Constants.SETTING_USER_KEY;
@@ -21,15 +23,19 @@ public class ApplicationCache {
         String url = appComponent.getValue(SETTING_URL_KEY);
         String user = appComponent.getValue(SETTING_USER_KEY);
         String password = appComponent.getValue(SETTING_PASSWORD_KEY);
-        CodeAuditSettingModel model = new CodeAuditSettingModel(url, user, password);
+        String spaceKey = appComponent.getValue(SETTING_CONF_SPACE_KEY);
+        String parentId = appComponent.getValue(SETTING_CONF_PARENT_DIR_ID);
+        CodeAuditSettingModel model = new CodeAuditSettingModel(url, user, password, spaceKey, parentId);
         return model;
     }
 
-    public static void saveCodeAuditSetting(String url, String userName, String password) {
+    public static void saveCodeAuditSetting(String url, String userName, String password, String spaceKey, String parentId) {
         PropertiesComponent appComponent = PropertiesComponent.getInstance();
         appComponent.setValue(SETTING_URL_KEY, url);
         appComponent.setValue(SETTING_USER_KEY, userName);
         appComponent.setValue(SETTING_PASSWORD_KEY, password);
+        appComponent.setValue(SETTING_CONF_SPACE_KEY, spaceKey);
+        appComponent.setValue(SETTING_CONF_PARENT_DIR_ID, parentId);
     }
 
     public static void cleanAllCache() {

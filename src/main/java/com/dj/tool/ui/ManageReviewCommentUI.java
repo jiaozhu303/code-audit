@@ -5,6 +5,7 @@ import com.dj.tool.common.CommonUtil;
 import com.dj.tool.common.ExcelOperateUtil;
 import com.dj.tool.common.HttpRequestFactory;
 import com.dj.tool.common.ProjectCache;
+import com.dj.tool.model.CodeAuditSettingModel;
 import com.dj.tool.model.CommentTableModel;
 import com.dj.tool.model.ReviewCommentInfoModel;
 import com.dj.tool.render.CommentTableCellRender;
@@ -17,6 +18,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.util.Icons;
 import com.intellij.util.ui.TextTransferable;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
@@ -33,6 +35,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.dj.tool.common.ApplicationCache.getCodeAuditSetting;
+import static com.dj.tool.common.CommonUtil.getFormattedTimeForTitle;
 import static com.dj.tool.common.Constants.*;
 
 
@@ -172,19 +176,33 @@ public class ManageReviewCommentUI {
         });
 
         syncConfluenceButton.addActionListener(e -> {
-            System.out.println(Optional.ofNullable(ApplicationCache.getAllDataList())
-                .orElseGet(Lists::newArrayList)
-                .stream()
-                .filter(Objects::nonNull)
-                .map(ReviewCommentInfoModel::toCopyString)
-                .collect(Collectors.toList())
-            );
-            try {//"<form><input type='checkbox'>test-01<br/><input type='checkbox'>test-02<br/><input type='checkbox'>test-03<br/></form>"
-                HttpRequestFactory.sendDataToConf("zhaodj5", "daDI@lenovo", "cr-01", "PPC", "172484093",
-                    "<h1>test context</h1>");
+            CodeAuditSettingModel codeAuditSetting = getCodeAuditSetting();
+            boolean valid = codeAuditSetting.isValid();
+            if (!valid) {
+                Messages.showMessageDialog("Please setting confluence info!", "Setting Warning", Icons.EXPORT_ICON);
+                return;
+            }
+            try {
+                String data = Optional.ofNullable(ApplicationCache.getAllDataList())
+                    .orElseGet(Lists::newArrayList)
+                    .stream()
+                    .filter(Objects::nonNull)
+                    .map(ReviewCommentInfoModel::toCopyString)
+                    .filter(StringUtils::isNotBlank)
+                    .map(item -> item + "   fixed: no" + " \n\r")
+                    .reduce("", (x, y) -> x + y);
+                if (StringUtils.isBlank(data)) {
+                    Messages.showMessageDialog("There is no record need to sync!", "Setting Warning", Icons.WARNING_INTRODUCTION_ICON);
+                    return;
+                }
+                HttpRequestFactory.sendDataToConf(codeAuditSetting.getUrl(), codeAuditSetting.getUserName(), codeAuditSetting.getPassword(),
+                    getFormattedTimeForTitle(), codeAuditSetting.getSpaceKey(), codeAuditSetting.getParentId(), data);
+                Messages.showMessageDialog("sync to confluence successful!", "Warning", Icons.WARNING_INTRODUCTION_ICON);
             } catch (Exception ex) {
+                Messages.showMessageDialog("sync to confluence fail!", "Warning", Icons.ERROR_INTRODUCTION_ICON);
                 throw new RuntimeException(ex);
             }
+
         });
 
         exportButton.addActionListener(e -> {

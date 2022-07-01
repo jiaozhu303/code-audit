@@ -22,6 +22,8 @@ public class CodeAuditSettingDialog extends JDialog {
     private JTextField urlTextField;
     private JTextField userNameTextField;
     private JTextField passwordTextField;
+    private JTextField spaceKeyTextField;
+    private JTextField parentIdTextField;
 
 
     public CodeAuditSettingDialog() {
@@ -63,7 +65,9 @@ public class CodeAuditSettingDialog extends JDialog {
         ApplicationCache.saveCodeAuditSetting(
             this.urlTextField.getText(),
             this.userNameTextField.getText(),
-            this.passwordTextField.getText());
+            this.passwordTextField.getText(),
+            this.spaceKeyTextField.getText(),
+            this.parentIdTextField.getText());
         dispose();
     }
 
@@ -77,6 +81,8 @@ public class CodeAuditSettingDialog extends JDialog {
         dialog.urlTextField.setText(model.getUrl());
         dialog.userNameTextField.setText(model.getUserName());
         dialog.passwordTextField.setText(model.getPassword());
+        dialog.spaceKeyTextField.setText(model.getSpaceKey());
+        dialog.parentIdTextField.setText(model.getParentId());
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int w = (screenSize.width - WIDTH) / 2;

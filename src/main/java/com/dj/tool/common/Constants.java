@@ -9,6 +9,7 @@ public class Constants {
     public static final int CONNECTION_REQUEST_TIMEOUT = 10000;
     public static final int SOCKET_TIMEOUT = 5000;
     public static final int CONNECT_TIMEOUT = 2000;
+    public static final String CHARSET_UTF_8 = "UTF-8";
     public static String TYPE_QUESTION = "Question";
     public static String TYPE_ADVICE = "Advice";
     public static String TYPE_ALLEGATIONS = "Allegations";
@@ -27,6 +28,13 @@ public class Constants {
     public static final String SETTING_URL_KEY = "code_audit_key_url";
     public static final String SETTING_USER_KEY = "code_audit_key_user_name";
     public static final String SETTING_PASSWORD_KEY = "code_audit_key_password";
+
+    public static final String SETTING_CONF_SPACE_KEY = "code_audit_conf_space_key";
+
+    public static final String SETTING_CONF_PARENT_DIR_ID = "code_audit_conf__parent_dir_id";
+
+    public static final String CREATE_DOC_CONFLUENCE_API = "https://km.xpaas.lenovo.com/rest/api/content";
+    // space_key: "PPC", dir_id: "172484093",
 
 
 }

@@ -44,4 +44,9 @@ public class CommonUtil {
         return simpleDateFormat.format(new Date());
     }
 
+    public static String getFormattedTimeForTitle() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd-HH.mm.ss");
+        return simpleDateFormat.format(new Date());
+    }
+
 }
