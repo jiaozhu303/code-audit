@@ -189,14 +189,14 @@ public class ManageReviewCommentUI {
                     .filter(Objects::nonNull)
                     .map(ReviewCommentInfoModel::toCopyString)
                     .filter(StringUtils::isNotBlank)
-                    .map(item -> item + "   fixed: no" + " \n\r")
+                    .map(item -> "<li>"+item + "        fixed: no" + "</li>")
                     .reduce("", (x, y) -> x + y);
                 if (StringUtils.isBlank(data)) {
                     Messages.showMessageDialog("There is no record need to sync!", "Setting Warning", Icons.WARNING_INTRODUCTION_ICON);
                     return;
                 }
                 HttpRequestFactory.sendDataToConf(codeAuditSetting.getUrl(), codeAuditSetting.getUserName(), codeAuditSetting.getPassword(),
-                    getFormattedTimeForTitle(), codeAuditSetting.getSpaceKey(), codeAuditSetting.getParentId(), data);
+                    getFormattedTimeForTitle(), codeAuditSetting.getSpaceKey(), codeAuditSetting.getParentId(), "<ul>"+data+"</ul>");
                 Messages.showMessageDialog("sync to confluence successful!", "Warning", Icons.WARNING_INTRODUCTION_ICON);
             } catch (Exception ex) {
                 Messages.showMessageDialog("sync to confluence fail!", "Warning", Icons.ERROR_INTRODUCTION_ICON);
