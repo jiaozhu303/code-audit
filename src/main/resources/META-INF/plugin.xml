@@ -20,6 +20,7 @@
             Framework</a>.
         <p>Includes support for:
         <ul>
+            <li>support confluence</li>
             <li>code completion</li>
             <li>references</li>
             <li>refactoring</li>

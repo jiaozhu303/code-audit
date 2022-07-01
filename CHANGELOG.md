@@ -2,6 +2,10 @@
 
 # Code Audit Tool Changelog
 
+## [2.0.8]
+### Change
+- sync record to confluence
+
 ## [2.0.5]
 ### Change
 - rename project
