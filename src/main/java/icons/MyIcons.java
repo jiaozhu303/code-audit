@@ -8,6 +8,8 @@ public interface MyIcons {
 
     // action 16*16
     Icon Action = IconLoader.getIcon("/icons/braces_16*16.svg", MyIcons.class);
+    Icon Code = IconLoader.getIcon("/icons/code-slash_16*16.svg", MyIcons.class);
+    Icon Setting = IconLoader.getIcon("/icons/setting_16*16.svg", MyIcons.class);
     // tool window 13*13
     Icon ToolWindow = IconLoader.getIcon("/icons/braces_13*13.svg", MyIcons.class);
     // Editor gutter 12*12

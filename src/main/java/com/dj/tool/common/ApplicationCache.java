@@ -3,12 +3,15 @@ package com.dj.tool.common;
 import com.dj.tool.model.CodeAuditSettingModel;
 import com.dj.tool.model.ReviewCommentInfoModel;
 import com.dj.tool.service.CodeAuditSettingApplicationService;
+import com.google.common.collect.Lists;
 import com.intellij.ide.util.PropertiesComponent;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.dj.tool.common.Constants.SETTING_CONF_PARENT_DIR_ID;
 import static com.dj.tool.common.Constants.SETTING_CONF_SPACE_KEY;
@@ -70,6 +73,18 @@ public class ApplicationCache {
     public static Collection<ReviewCommentInfoModel> getAllDataList() {
         CodeAuditSettingApplicationService instance = CodeAuditSettingApplicationService.getInstance();
         return instance.getAllDataList();
+    }
+
+    public static List<ReviewCommentInfoModel> getProjectAllData(String projectName) {
+        return Optional.ofNullable(getAllDataList()).orElseGet(Lists::newArrayList)
+            .stream()
+            .filter(item -> item.getProjectName().equalsIgnoreCase(projectName))
+            .collect(Collectors.toList());
+    }
+
+    public static void updateProjectData(ReviewCommentInfoModel model) {
+        CodeAuditSettingApplicationService instance = CodeAuditSettingApplicationService.getInstance();
+        instance.updateItem(model);
     }
 
 }

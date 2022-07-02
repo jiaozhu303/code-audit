@@ -6,8 +6,6 @@ import groovyjarjarantlr4.v4.runtime.misc.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-import static com.intellij.openapi.graph.layout.LayoutTool.CENTER;
-
 public class ClearConfirmDialog extends DialogWrapper {
 
 
@@ -21,8 +19,7 @@ public class ClearConfirmDialog extends DialogWrapper {
     @Override
     protected JComponent createCenterPanel() {
         JPanel dialogPanel = new JPanel(new BorderLayout(0, 0));
-
-        JLabel label = new JLabel("Do you want clear all？");
+        JLabel label = new JLabel("Do you want clear all project record ？");
         label.setPreferredSize(new Dimension(200, 60));
         dialogPanel.add(label, BorderLayout.CENTER);
         return dialogPanel;

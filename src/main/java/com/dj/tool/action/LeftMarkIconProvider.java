@@ -1,8 +1,7 @@
 package com.dj.tool.action;
 
-import com.dj.tool.common.ProjectCache;
+import com.dj.tool.common.ApplicationCache;
 import com.dj.tool.model.ReviewCommentInfoModel;
-import com.dj.tool.service.CodeAuditSettingProjectService;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
@@ -53,9 +52,8 @@ public class LeftMarkIconProvider extends RelatedItemLineMarkerProvider {
 
             // currentLine统一用endLine来处理，标准化所有处理场景，避免换行的场景，上下都被匹配上了
             int currentLine = endLineNumber - 1;
-            CodeAuditSettingProjectService projectCache = ProjectCache.getInstance(project);
 
-            List<ReviewCommentInfoModel> projectAllData = projectCache.getProjectAllData();
+            List<ReviewCommentInfoModel> projectAllData = ApplicationCache.getProjectAllData(project.getName());
             if (projectAllData != null) {
                 String path = element.getContainingFile().getVirtualFile().getName();
 

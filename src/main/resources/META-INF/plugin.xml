@@ -39,25 +39,24 @@
     <depends>com.intellij.modules.platform</depends>
 
     <actions>
-        <action id="add-comment" class="com.dj.tool.action.AddComment" text="Code Audit Tool" icon="MyIcons.Action"
-                description="Code Audit tool">
+
+        <group id="code-audit-group" text="Code Audit" description="Code Audit" icon="MyIcons.Code" popup="true">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
-            <keyboard-shortcut keymap="$default" first-keystroke="alt A"/>
-        </action>
-        <!--        <action id="add-log" class="com.dj.tool.action.AddLogAction" text="Addlog" icon="MyIcons.Editor"-->
-        <!--                description="add code log">-->
-        <!--            <add-to-group group-id="ToolsMenu" anchor="last"/>-->
-        <!--            <keyboard-shortcut keymap="$default" first-keystroke="meta B"/>-->
-        <!--        </action>-->
-        <action id="code-setting" class="com.dj.tool.action.CodeAuditSetting" text="Code Audit Setting"
-                icon="MyIcons.Action"
-                description="Code Audit Setting">
-            <add-to-group group-id="ToolsMenu" anchor="last"/>
-        </action>
+            <action id="add-comment" class="com.dj.tool.action.AddComment" text="Code Audit Tool" icon="MyIcons.Action"
+                    description="Code Audit tool">
+                <keyboard-shortcut keymap="$default" first-keystroke="alt A"/>
+            </action>
+
+            <action id="code-setting" class="com.dj.tool.action.CodeAuditSetting" text="Code Audit Setting"
+                    icon="MyIcons.Setting"
+                    description="Code Audit Setting">
+            </action>
+        </group>
+
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <projectService serviceImplementation="com.dj.tool.service.CodeAuditSettingProjectService"/>
+<!--        <projectService serviceImplementation="com.dj.tool.service.CodeAuditSettingProjectService"/>-->
         <applicationService serviceImplementation="com.dj.tool.service.CodeAuditSettingApplicationService"/>
         <toolWindow id="CodeRecord"
                     icon="MyIcons.ToolWindow"

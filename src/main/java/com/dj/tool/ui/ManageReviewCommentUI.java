@@ -4,12 +4,11 @@ import com.dj.tool.common.ApplicationCache;
 import com.dj.tool.common.CommonUtil;
 import com.dj.tool.common.ExcelOperateUtil;
 import com.dj.tool.common.HttpRequestFactory;
-import com.dj.tool.common.ProjectCache;
+import com.dj.tool.common.ReviewManagerFactory;
 import com.dj.tool.model.CodeAuditSettingModel;
 import com.dj.tool.model.CommentTableModel;
 import com.dj.tool.model.ReviewCommentInfoModel;
 import com.dj.tool.render.CommentTableCellRender;
-import com.dj.tool.service.CodeAuditSettingProjectService;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.Project;
@@ -17,7 +16,6 @@ import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.util.Icons;
 import com.intellij.util.ui.TextTransferable;
-import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
@@ -30,12 +28,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.dj.tool.common.ApplicationCache.getCodeAuditSetting;
+import static com.dj.tool.common.CommonUtil.buildConfluenceFormatString;
 import static com.dj.tool.common.CommonUtil.getFormattedTimeForTitle;
 import static com.dj.tool.common.Constants.*;
 
@@ -59,8 +56,7 @@ public class ManageReviewCommentUI {
 
     public ManageReviewCommentUI(Project project) {
         this.project = project;
-        CodeAuditSettingProjectService projectCache = ProjectCache.getInstance(project);
-        this.tableData = projectCache.getProjectAllData();
+        this.tableData = ApplicationCache.getProjectAllData(project.getName());
     }
 
 
@@ -71,8 +67,7 @@ public class ManageReviewCommentUI {
     }
 
     public void reloadTableData() {
-        CodeAuditSettingProjectService projectCache = ProjectCache.getInstance(project);
-        this.tableData = projectCache.getProjectAllData();
+        this.tableData = ApplicationCache.getProjectAllData(project.getName());
         List<Object[]> rowDataList = new ArrayList<>();
         for (ReviewCommentInfoModel model : this.tableData) {
             Object[] row = {model.getIdentifier(), model.getReviewer(), model.getComments(), model.getAuthor(), model.getType(),
@@ -127,8 +122,7 @@ public class ManageReviewCommentUI {
                 model.setType(type);
                 model.setSeverity(severity);
                 model.setFactor(factor);
-                CodeAuditSettingProjectService projectCache = ProjectCache.getInstance(project);
-                projectCache.updateProjectData(model);
+                ApplicationCache.updateProjectData(model);
             }
         });
     }
@@ -161,18 +155,10 @@ public class ManageReviewCommentUI {
         });
 
         clearButton.addActionListener(e -> {
-
             if (new ClearConfirmDialog().showAndGet()) {
-                List<Long> clearCommentIdList = Optional.ofNullable(this.tableData).orElseGet(Lists::newArrayList)
-                    .stream()
-                    .map(ReviewCommentInfoModel::getIdentifier)
-                    .collect(Collectors.toList());
-                CodeAuditSettingProjectService projectCache = ProjectCache.getInstance(project);
-                projectCache.cleanAllData();
-                reloadTableData();
-                ApplicationCache.deleteCacheList(clearCommentIdList);
+                ApplicationCache.cleanAllCache();
+                ReviewManagerFactory.reloadAllProjectData();
             }
-
         });
 
         syncConfluenceButton.addActionListener(e -> {
@@ -183,20 +169,14 @@ public class ManageReviewCommentUI {
                 return;
             }
             try {
-                String data = Optional.ofNullable(ApplicationCache.getAllDataList())
-                    .orElseGet(Lists::newArrayList)
-                    .stream()
-                    .filter(Objects::nonNull)
-                    .map(ReviewCommentInfoModel::toCopyString)
-                    .filter(StringUtils::isNotBlank)
-                    .map(item -> "<li>"+item + "        fixed: no" + "</li>")
-                    .reduce("", (x, y) -> x + y);
+                Collection<ReviewCommentInfoModel> allDataList = ApplicationCache.getAllDataList();
+                String data = buildConfluenceFormatString(allDataList);
                 if (StringUtils.isBlank(data)) {
                     Messages.showMessageDialog("There is no record need to sync!", "Setting Warning", Icons.WARNING_INTRODUCTION_ICON);
                     return;
                 }
                 HttpRequestFactory.sendDataToConf(codeAuditSetting.getUrl(), codeAuditSetting.getUserName(), codeAuditSetting.getPassword(),
-                    getFormattedTimeForTitle(), codeAuditSetting.getSpaceKey(), codeAuditSetting.getParentId(), "<ul>"+data+"</ul>");
+                    getFormattedTimeForTitle(), codeAuditSetting.getSpaceKey(), codeAuditSetting.getParentId(), "<ul>" + data + "</ul>");
                 Messages.showMessageDialog("sync to confluence successful!", "Warning", Icons.WARNING_INTRODUCTION_ICON);
             } catch (Exception ex) {
                 Messages.showMessageDialog("sync to confluence fail!", "Warning", Icons.ERROR_INTRODUCTION_ICON);
@@ -231,14 +211,14 @@ public class ManageReviewCommentUI {
             if (new DeleteConfirmDialog().showAndGet()) {
                 List<Long> deleteIndentifierList = new ArrayList<>();
                 int[] selectedRows = commentTable.getSelectedRows();
+                if (selectedRows.length <= 0) {
+                    Messages.showMessageDialog("please select item first!", "Warning", Icons.WARNING_INTRODUCTION_ICON);
+                }
                 if (selectedRows != null && selectedRows.length > 0) {
                     for (int rowId : selectedRows) {
                         Long valueAt = (Long) commentTable.getValueAt(rowId, 0);
                         deleteIndentifierList.add(valueAt);
                     }
-
-                    CodeAuditSettingProjectService projectCache = ProjectCache.getInstance(project);
-                    projectCache.deleteComments(deleteIndentifierList);
                     ApplicationCache.deleteCacheList(deleteIndentifierList);
                 }
                 reloadTableData();

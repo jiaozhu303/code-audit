@@ -1,7 +1,8 @@
 package com.dj.tool.common;
 
 import com.google.common.collect.Lists;
-import org.apache.commons.lang.StringUtils;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.util.Icons;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.config.CookieSpecs;
@@ -121,9 +122,12 @@ public class HttpRequestFactory {
 
             //获取结果实体
             HttpEntity entity = response.getEntity();
-            if (entity != null) {
-                //按指定编码转换结果实体为String类型
-                body = EntityUtils.toString(entity, encoding);
+
+            boolean isSuccess = response.getStatusLine().getStatusCode() != 200 &&
+                response.getStatusLine().getStatusCode() != 201 &&
+                response.getStatusLine().getStatusCode() != 202;
+            if (!isSuccess) {
+                Messages.showMessageDialog("sync to confluence fail!", "Fail!", Icons.FIELD_ICON);
             }
             EntityUtils.consume(entity);
             //释放链接

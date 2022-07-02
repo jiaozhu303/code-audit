@@ -213,4 +213,15 @@ public class ReviewCommentInfoModel implements Serializable {
         }
         return copyLine + "\n\r";
     }
+
+    public String toSyncString() {
+        String copyLine = "[" + projectName + "] - " + filePath + " line: " + lineRange;
+        if (!StringUtil.isEmpty(comments)) {
+            copyLine = copyLine + " (" + comments + ") ";
+        }
+        if (!StringUtil.isEmpty(author)) {
+            copyLine = copyLine + " author: @" + author;
+        }
+        return copyLine;
+    }
 }

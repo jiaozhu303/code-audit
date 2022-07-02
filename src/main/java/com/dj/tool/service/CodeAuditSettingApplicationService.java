@@ -9,6 +9,7 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,6 +17,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @State(name = "CodeAuditSettingService",
@@ -93,5 +95,12 @@ public final class CodeAuditSettingApplicationService implements PersistentState
 
     public Collection<ReviewCommentInfoModel> getAllDataList() {
         return Optional.ofNullable(this.data).orElseGet(Maps::newHashMap).values();
+    }
+
+    public void updateItem(ReviewCommentInfoModel model) {
+        if (Objects.isNull(model) && MapUtils.isNotEmpty(this.data)) {
+            return;
+        }
+        this.data.put(model.getIdentifier(), model);
     }
 }

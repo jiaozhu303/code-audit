@@ -1,15 +1,19 @@
 package com.dj.tool.common;
 
 import com.dj.tool.model.ReviewCommentInfoModel;
-import com.intellij.openapi.diagnostic.Logger;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 
 public class CommonUtil {
@@ -47,6 +51,27 @@ public class CommonUtil {
     public static String getFormattedTimeForTitle() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd-HH.mm.ss");
         return simpleDateFormat.format(new Date());
+    }
+
+    public static String buildConfluenceFormatString(Collection<ReviewCommentInfoModel> dataList) {
+        String data = Optional.ofNullable(dataList)
+            .orElseGet(Lists::newArrayList)
+            .stream()
+            .filter(Objects::nonNull)
+            .map(ReviewCommentInfoModel::toSyncString)
+            .filter(StringUtils::isNotBlank)
+            .map(item -> "<li>" + item + "        fixed: no" + "</li>")
+//            .map(CommonUtil::buildItem)
+            .reduce("", (x, y) -> x + y);
+        return data;
+    }
+
+    private static String buildItem(String itemData) {
+        String id = UUID.randomUUID().toString();
+        return "<div>" +
+            "  <input type=\"checkbox\" id=\" " + id + "\" value=\"second_checkbox\" checked=\"checked\">" +
+            "  <label for=\"" + id + " \">" + itemData +
+            "</div>";
     }
 
 }
