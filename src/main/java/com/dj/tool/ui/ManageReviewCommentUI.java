@@ -177,7 +177,7 @@ public class ManageReviewCommentUI {
                 }
                 HttpRequestFactory.sendDataToConf(codeAuditSetting.getUrl(), codeAuditSetting.getUserName(), codeAuditSetting.getPassword(),
                     getFormattedTimeForTitle(), codeAuditSetting.getSpaceKey(), codeAuditSetting.getParentId(), "<ul>" + data + "</ul>");
-                Messages.showMessageDialog("sync to confluence successful!", "Warning", Icons.WARNING_INTRODUCTION_ICON);
+
             } catch (Exception ex) {
                 Messages.showMessageDialog("sync to confluence fail!", "Warning", Icons.ERROR_INTRODUCTION_ICON);
                 throw new RuntimeException(ex);

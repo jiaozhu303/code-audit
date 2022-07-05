@@ -123,11 +123,14 @@ public class HttpRequestFactory {
             //获取结果实体
             HttpEntity entity = response.getEntity();
 
-            boolean isSuccess = response.getStatusLine().getStatusCode() != 200 &&
-                response.getStatusLine().getStatusCode() != 201 &&
-                response.getStatusLine().getStatusCode() != 202;
+            boolean isSuccess = response.getStatusLine().getStatusCode() == 200 ||
+                response.getStatusLine().getStatusCode() == 201 ||
+                response.getStatusLine().getStatusCode() == 202;
             if (!isSuccess) {
                 Messages.showMessageDialog("sync to confluence fail!", "Fail!", Icons.FIELD_ICON);
+            }
+            if (isSuccess) {
+                Messages.showMessageDialog("sync to confluence successful!", "Warning", Icons.WARNING_INTRODUCTION_ICON);
             }
             EntityUtils.consume(entity);
             //释放链接
