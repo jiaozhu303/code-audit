@@ -6,7 +6,6 @@ import groovyjarjarantlr4.v4.runtime.misc.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-import static com.intellij.openapi.graph.layout.LayoutTool.CENTER;
 
 public class DeleteConfirmDialog extends DialogWrapper {
 
