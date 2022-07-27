@@ -2,6 +2,14 @@
 
 # Code Audit Tool Changelog
 
+## [2.0.11]
+### Change
+- support 2022.2
+
+## [2.0.10]
+### Change
+- build to IC
+
 ## [2.0.9]
 ### Change
 - group action

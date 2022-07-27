@@ -19,7 +19,7 @@ public class ManageReviewComment implements ToolWindowFactory {
         ManageReviewCommentUI manageReviewCommentUI = ReviewManagerFactory.getInstance(project);
         manageReviewCommentUI.initUI();
 
-        ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
+        ContentFactory contentFactory = ContentFactory.getInstance();
         Content content = contentFactory.createContent(manageReviewCommentUI.fullPanel, null, false);
         toolWindow.getContentManager().addContent(content);
         toolWindow.setIcon(MyIcons.ToolWindow);
