@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 public class CommonUtil {
@@ -54,24 +54,18 @@ public class CommonUtil {
     }
 
     public static String buildConfluenceFormatString(Collection<ReviewCommentInfoModel> dataList) {
-        String data = Optional.ofNullable(dataList)
+        List<String> stringDataList = Optional.ofNullable(dataList)
             .orElseGet(Lists::newArrayList)
             .stream()
             .filter(Objects::nonNull)
             .map(ReviewCommentInfoModel::toSyncString)
             .filter(StringUtils::isNotBlank)
-            .map(item -> "<li>" + item + "        fixed: no" + "</li>")
-//            .map(CommonUtil::buildItem)
-            .reduce("", (x, y) -> x + y);
-        return data;
-    }
+            .collect(Collectors.toList());
 
-    private static String buildItem(String itemData) {
-        String id = UUID.randomUUID().toString();
-        return "<div>" +
-            "  <input type=\"checkbox\" id=\" " + id + "\" value=\"second_checkbox\" checked=\"checked\">" +
-            "  <label for=\"" + id + " \">" + itemData +
-            "</div>";
+        List<ConfluenceTaskItem> taskList = stringDataList.stream()
+            .map(task -> new ConfluenceTaskItem(stringDataList.indexOf(task), task))
+            .collect(Collectors.toList());
+        return new ConfluenceTaskListFactory(taskList).toString();
     }
 
 }
