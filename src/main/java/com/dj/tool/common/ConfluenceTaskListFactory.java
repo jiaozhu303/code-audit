@@ -1,9 +1,10 @@
 package com.dj.tool.common;
 
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * <ac:task-list>
@@ -68,8 +69,12 @@ public class ConfluenceTaskListFactory {
 
     @Override
     public String toString() {
-        String taskTagList = Optional.ofNullable(this.taskList).orElseGet(ArrayList::new)
-            .stream().map(ConfluenceTaskItem::toString)
+        if (CollectionUtils.isEmpty(this.taskList)) {
+            return null;
+        }
+        String taskTagList = this.taskList
+            .stream()
+            .map(ConfluenceTaskItem::toString)
             .reduce("", (item1, item2) -> item1 + item2);
         return "<ac:task-list> " + taskTagList + "</ac:task-list>";
     }
