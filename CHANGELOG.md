@@ -2,6 +2,10 @@
 
 # Code Audit Tool Changelog
 
+## [2.2.0]
+### Change
+- support idea 2022.3 version
+
 ## [2.1.0]
 ### Change
 - update confluence syntax
