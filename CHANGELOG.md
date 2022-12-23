@@ -2,6 +2,12 @@
 
 # Code Audit Tool Changelog
 
+## [2.3.0]
+### Change
+- update plugin framework version
+- support java 17
+- support IDEA new UI Component
+
 ## [2.2.0]
 ### Change
 - support idea 2022.3 version
