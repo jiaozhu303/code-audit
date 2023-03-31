@@ -2,6 +2,12 @@
 
 # Code Audit Tool Changelog
 
+## [2.3.1]
+### Change
+- update plugin framework version
+- support java 17
+- support IDEA 231
+
 ## [2.3.0]
 ### Change
 - update plugin framework version
