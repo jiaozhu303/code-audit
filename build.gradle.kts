@@ -38,6 +38,9 @@ dependencies {
     implementation("org.apache.httpcomponents:httpclient:4.4.1")
     implementation("org.apache.httpcomponents:httpmime:4.4.1")
     implementation("org.apache.httpcomponents:httpasyncclient:4.1")
+    implementation("org.apache.commons:commons-lang3:3.7")
+    implementation("org.apache.commons:commons-collections4:4.2")
+    implementation("com.google.guava:guava:27.1-jre")
 }
 
 // Configure Gradle IntelliJ Plugin - read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
