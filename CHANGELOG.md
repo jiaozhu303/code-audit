@@ -2,6 +2,11 @@
 
 # Code Audit Tool Changelog
 
+## [2.3.2]
+### Change
+- update plugin framework version
+- support IDEA 232
+
 ## [2.3.1]
 ### Change
 - update plugin framework version
