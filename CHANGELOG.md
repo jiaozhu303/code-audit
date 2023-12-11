@@ -2,6 +2,11 @@
 
 # Code Audit Tool Changelog
 
+## [2.3.4]
+### Change
+- update plugin framework version
+- support IDEA 234
+
 ### Changed
 
 - Upgrade Gradle Wrapper to `8.5`
@@ -33,62 +38,7 @@
 - update plugin framework version
 - support java 17
 - support IDEA new UI Component
-
-## [2.2.0]
-### Change
-- support idea 2022.3 version
-
-## [2.1.0]
-### Change
-- update confluence syntax
-
-## [2.0.11]
-### Change
-- support 2022.2
-
-## [2.0.10]
-### Change
-- build to IC
-
-## [2.0.9]
-### Change
-- group action
 - 
-## [2.0.8]
-### Change
-- sync record to confluence
-
-## [2.0.5]
-### Change
-- rename project
-
-## [2.0.2]
-### Change
-- refactor new project 
-
-## [Unreleased]
-
-## [1.1.2]
-### Changed
-- Update `platformVersion` to `2021.1.3` for compatibility with Apple M1
-- Change since/until build to `211-213.*` (2021.1 - 2021.3)
-- Upgrade Gradle Wrapper to `7.4`
-- Dependencies - upgrade `org.jetbrains.intellij` to `1.4.0`
-- Dependencies (GitHub Actions) - upgrade `JetBrains/qodana-action` to `4.2.5`
-
-## [1.1.1]
-### Changed
-- GitHub Actions - fixed duplicated `.zip` extension in artifact file's name of the build flow
-- Upgrade Gradle Wrapper to `7.3.3`
-- Dependencies - upgrade `org.jetbrains.intellij` to `1.3.1`
-- Dependencies - upgrade `org.jetbrains.kotlin.jvm` to `1.6.10`
-- Dependencies (GitHub Actions) - upgrade `JetBrains/qodana-action` to `4.2.3`
-- Dependencies (GitHub Actions) - upgrade `actions/cache` to `v2.1.7`
-
-## [1.1.0]
-### Added
-- GitHub Actions: Collect Qodana/Tests/Plugin Verifier results as artifacts
-
 ### Changed
 - Dependencies - upgrade `org.jetbrains.intellij` to `1.3.0` 
 - Dependencies - upgrade `org.jetbrains.changelog` to `1.3.1`
