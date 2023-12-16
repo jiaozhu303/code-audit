@@ -6,11 +6,11 @@
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="jiaozhu303@yeha.net" url="https://www.dj.com">DJ</vendor>
 
-    <product-descriptor
-            code="PMYPLUGIN"
-            release-date="20231211"
-            release-version="20233"
-            optional="true"/>
+<!--    <product-descriptor-->
+<!--            code="PMYPLUGIN"-->
+<!--            release-date="20231211"-->
+<!--            release-version="20233"-->
+<!--            optional="true"/>-->
 
     <description>
 
