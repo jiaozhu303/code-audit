@@ -2,6 +2,12 @@
 
 # Code Audit Tool Changelog
 
+
+## [2.3.5]
+### Change
+- update platform version to 2022.3.1
+
+
 ## [2.3.4]
 ### Change
 - update plugin framework version
