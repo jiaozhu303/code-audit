@@ -43,9 +43,8 @@ import java.util.List;
  */
 public class ConfluenceTaskListFactory {
 
-
     private String taskListTag; // <ac:task-list> </ac:task-list>
-    private List<ConfluenceTaskItem> taskList = new ArrayList();
+    private List<ConfluenceTaskItem> taskList = new ArrayList<>();
 
     public ConfluenceTaskListFactory(List<ConfluenceTaskItem> taskList) {
         this.taskList = taskList;

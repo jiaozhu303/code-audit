@@ -3,6 +3,10 @@
 # Code Audit Tool Changelog
 
 
+## [2.3.6]
+### Change
+- update plugin.xml file config
+
 ## [2.3.5]
 ### Change
 - update platform version to 2022.3.1

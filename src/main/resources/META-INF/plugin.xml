@@ -6,28 +6,28 @@
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="jiaozhu303@yeha.net" url="https://www.dj.com">DJ</vendor>
 
-<!--    <product-descriptor-->
-<!--            code="PMYPLUGIN"-->
-<!--            release-date="20231211"-->
-<!--            release-version="20233"-->
-<!--            optional="true"/>-->
-
+    <product-descriptor
+            code="PCODEAUDIT"
+            release-date="20231219"
+            release-version="20231219"
+            optional="true"/>
+    <version>2.3.6</version>
+    <idea-version since-build="233" until-build="233.*"/>
     <description>
-
         <![CDATA[
-          <p>本工程基础源代码来自github.对源部分源代码文件进行修改，主要作用快速构建使用功能以及技术型参考，本工程同样遵守apache 2.0 开源协议</p>
-        Provides support for <a href="https://example.com/my-framework">My
-            Framework</a>.
-        <p>Includes support for:
-        <ul>
-            <li>support confluence</li>
-            <li>code completion</li>
-            <li>references</li>
-            <li>refactoring</li>
-            <li>rename</li>
-        </ul>
-        </p>
-  ]]>
+            <p>
+                After all, Code Review is a process added in the coding process, which requires a lot of communication. The two sides of review may even have disputes due to different programming concepts, and it is not easy to do a good Code Review for various reasons. So, this tool helps developers improve their code quality and thus their productivity.
+            </p>
+            <p>Includes support for:
+            <ul>
+                <li>support confluence</li>
+                <li>code completion</li>
+                <li>references</li>
+                <li>refactoring</li>
+                <li>rename</li>
+            </ul>
+            </p>
+        ]]>
     </description>
 
     <change-notes>
@@ -56,7 +56,7 @@
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-<!--        <projectService serviceImplementation="com.dj.tool.service.CodeAuditSettingProjectService"/>-->
+        <!--        <projectService serviceImplementation="com.dj.tool.service.CodeAuditSettingProjectService"/>-->
         <applicationService serviceImplementation="com.dj.tool.service.CodeAuditSettingApplicationService"/>
         <toolWindow id="CodeRecord"
                     icon="MyIcons.ToolWindow"
