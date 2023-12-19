@@ -12,14 +12,14 @@ public class ReviewManagerFactory {
     private static ConcurrentHashMap<String, ManageReviewCommentUI> instanceMap;
 
     public synchronized static ManageReviewCommentUI getInstance(Project project) {
-//        if (instanceMap == null) {
-//            instanceMap = new ConcurrentHashMap();
-//        }
-//        ManageReviewCommentUI manageReviewCommentUI = instanceMap.get(project.getName());
-//        if (Objects.isNull(manageReviewCommentUI)) {
-        ManageReviewCommentUI manageReviewCommentUI = new ManageReviewCommentUI(project);
-//            updateInstanceMap(manageReviewCommentUI, project.getName());
-//        }
+        if (instanceMap == null) {
+            instanceMap = new ConcurrentHashMap();
+        }
+        ManageReviewCommentUI manageReviewCommentUI = instanceMap.get(project.getName());
+        if (Objects.isNull(manageReviewCommentUI)) {
+//        ManageReviewCommentUI manageReviewCommentUI = new ManageReviewCommentUI(project);
+            updateInstanceMap(manageReviewCommentUI, project.getName());
+        }
         return manageReviewCommentUI;
     }
 
