@@ -9,7 +9,7 @@
     <product-descriptor
             code="PCODEAUDIT"
             release-date="20231223"
-            release-version="20231223"
+            release-version="202332"
             optional="true"/>
     <version>2.3.7</version>
     <idea-version since-build="233" until-build="233.*"/>
