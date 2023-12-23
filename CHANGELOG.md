@@ -5,7 +5,7 @@
 
 ## [2.3.7]
 ### Change
-- support 2023.3.3
+- support 2023.3.3 & update icon
 
 ## [2.3.6]
 ### Change
