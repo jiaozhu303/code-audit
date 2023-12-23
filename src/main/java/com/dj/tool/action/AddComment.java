@@ -3,6 +3,8 @@ package com.dj.tool.action;
 import com.dj.tool.common.CommonUtil;
 import com.dj.tool.model.ReviewCommentInfoModel;
 import com.dj.tool.ui.AddReviewCommentUI;
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Strings;
 import com.intellij.codeInsight.daemon.OutsidersPsiFileSupport;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -36,8 +38,7 @@ public class AddComment extends AnAction {
             return;
         }
         String basePath = project.getBasePath();
-        String fileName = StringUtils.substringAfter(fullPath, basePath + "/");
-
+        String fileName = fullPath.substring(basePath.length()+1, fullPath.length());
         Editor data = e.getData(CommonDataKeys.EDITOR);
         if (data == null) {
             return;

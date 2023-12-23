@@ -16,6 +16,7 @@ import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.util.Icons;
 import com.intellij.util.ui.TextTransferable;
+import icons.MyIcons;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
@@ -165,21 +166,21 @@ public class ManageReviewCommentUI {
             CodeAuditSettingModel codeAuditSetting = getCodeAuditSetting();
             boolean valid = codeAuditSetting.isValid();
             if (!valid) {
-                Messages.showMessageDialog("Please setting confluence info!", "Setting Warning", Icons.EXPORT_ICON);
+                Messages.showMessageDialog("Please setting confluence info!", "Setting Warning", MyIcons.Exclamation);
                 return;
             }
             try {
                 Collection<ReviewCommentInfoModel> allDataList = ApplicationCache.getAllDataList();
                 String data = buildConfluenceFormatString(allDataList);
                 if (StringUtils.isBlank(data)) {
-                    Messages.showMessageDialog("There is no record need to sync!", "Setting Warning", Icons.WARNING_INTRODUCTION_ICON);
+                    Messages.showMessageDialog("There is no record need to sync!", "Setting Warning", MyIcons.Exclamation);
                     return;
                 }
                 HttpRequestFactory.sendDataToConf(codeAuditSetting.getUrl(), codeAuditSetting.getUserName(), codeAuditSetting.getPassword(),
                     getFormattedTimeForTitle(), codeAuditSetting.getSpaceKey(), codeAuditSetting.getParentId(),  data);
 
             } catch (Exception ex) {
-                Messages.showMessageDialog("sync to confluence fail!", "Warning", Icons.ERROR_INTRODUCTION_ICON);
+                Messages.showMessageDialog("sync to confluence fail!", "Warning", MyIcons.Exclamation);
                 throw new RuntimeException(ex);
             }
 
@@ -198,7 +199,7 @@ public class ManageReviewCommentUI {
 
                 try {
                     ExcelOperateUtil.exportExcel(path, this.tableData);
-                    Messages.showMessageDialog("Export successfully!", "Export Finished", Icons.EXPORT_ICON);
+                    Messages.showMessageDialog("Export successfully!", "Export Finished", MyIcons.Exclamation);
                 } catch (Exception ex) {
                     Messages.showErrorDialog("export failed! Cause:" + System.lineSeparator() + ex.getMessage(), "Export Failed");
                 }
@@ -212,7 +213,7 @@ public class ManageReviewCommentUI {
                 List<Long> deleteIndentifierList = new ArrayList<>();
                 int[] selectedRows = commentTable.getSelectedRows();
                 if (selectedRows.length <= 0) {
-                    Messages.showMessageDialog("please select item first!", "Warning", Icons.WARNING_INTRODUCTION_ICON);
+                    Messages.showMessageDialog("please select item first!", "Warning", MyIcons.Exclamation);
                 }
                 if (selectedRows != null && selectedRows.length > 0) {
                     for (int rowId : selectedRows) {

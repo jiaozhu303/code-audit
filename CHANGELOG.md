@@ -3,6 +3,10 @@
 # Code Audit Tool Changelog
 
 
+## [2.3.7]
+### Change
+- support 2023.3.3
+
 ## [2.3.6]
 ### Change
 - update plugin.xml file config
