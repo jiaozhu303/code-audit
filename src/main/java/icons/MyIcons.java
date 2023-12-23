@@ -18,4 +18,5 @@ public interface MyIcons {
     Icon EditorQuestion = IconLoader.getIcon("/icons/question_12*12.svg", MyIcons.class);
 
     Icon Exclamation = IconLoader.getIcon("/icons/exclamation_12*12.svg", MyIcons.class);
+    Icon Exclamation_Middle = IconLoader.getIcon("/icons/exclamation_16*16.svg", MyIcons.class);
 }

@@ -1,8 +1,14 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
 # Code Audit Tool Changelog
+## [2.3.8]
+### Change
+- change save log way
 
-
+## [2.3.7]
+### Change
+- reset icons
+- 
 ## [2.3.7]
 ### Change
 - support 2023.3.3 & update icon

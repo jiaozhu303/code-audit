@@ -2,8 +2,8 @@ package com.dj.tool.ui;
 
 
 import com.dj.tool.common.ApplicationCache;
-import com.dj.tool.common.ReviewManagerFactory;
 import com.dj.tool.model.ReviewCommentInfoModel;
+import com.dj.tool.publisher.DateRefreshMessagePublisher;
 import com.intellij.openapi.project.Project;
 
 import javax.swing.*;
@@ -51,7 +51,7 @@ public class AddReviewCommentUI {
             model.setSeverity(addComment.severityComboBox.getSelectedItem().toString());
             model.setFactor(addComment.triggerFactorComboBox.getSelectedItem().toString());
             ApplicationCache.addOneToCache(model);
-            ReviewManagerFactory.getInstance(project).reloadTableData();
+            DateRefreshMessagePublisher.getInstance(project).fireDateRefreshExecute("add code record", project);
             dialog.dispose();
         });
 

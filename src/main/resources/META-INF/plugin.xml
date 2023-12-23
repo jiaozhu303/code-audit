@@ -6,12 +6,13 @@
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="jiaozhu303@yeha.net" url="https://www.dj.com">DJ</vendor>
 
-<!--    <product-descriptor-->
-<!--            code="PCODEAUDIT"-->
-<!--            release-date="20231223"-->
-<!--            release-version="202332"-->
-<!--            optional="true"/>-->
-    <version>2.3.7</version>
+    <!--    收费插件 - 必须启用此标签信息-->
+    <!--    <product-descriptor-->
+    <!--            code="PCODEAUDIT"-->
+    <!--            release-date="20231223"-->
+    <!--            release-version="202332"-->
+    <!--            optional="true"/>-->
+    <version>2.3.8</version>
     <idea-version since-build="233" until-build="233.*"/>
     <description>
         <![CDATA[
@@ -58,6 +59,9 @@
     <extensions defaultExtensionNs="com.intellij">
         <!--        <projectService serviceImplementation="com.dj.tool.service.CodeAuditSettingProjectService"/>-->
         <applicationService serviceImplementation="com.dj.tool.service.CodeAuditSettingApplicationService"/>
+        <!--        <projectService serviceImplementation="com.dj.tool.listener.DateRefreshNotifyListener"/>-->
+        <applicationService serviceImplementation="com.dj.tool.publisher.DateRefreshMessagePublisher"/>
+
         <toolWindow id="CodeRecord"
                     icon="MyIcons.ToolWindow"
                     anchor="bottom"
@@ -66,10 +70,11 @@
         <codeInsight.lineMarkerProvider
                 language=""
                 implementationClass="com.dj.tool.action.LeftMarkIconProvider"/>
+        <notificationGroup id="Code Audit Notification Group"
+                           displayType="BALLOON"/>
     </extensions>
-
     <!--    <applicationListeners>-->
-    <!--        <listener class="com.dj.tool.listeners.MyProjectManagerListener"-->
-    <!--                  topic="com.intellij.openapi.project.ProjectManagerListener"/>-->
+    <!--        <listener class="com.dj.tool.listener.DateRefreshNotifyListener"-->
+    <!--                  topic="com.dj.tool.listener.DateRefreshListener"/>-->
     <!--    </applicationListeners>-->
 </idea-plugin>

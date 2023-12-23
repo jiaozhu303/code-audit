@@ -1,8 +1,6 @@
 package com.dj.tool.common;
 
 import com.google.common.collect.Lists;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.util.Icons;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.config.CookieSpecs;
@@ -26,6 +24,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class HttpRequestFactory {
 
@@ -47,9 +46,9 @@ public class HttpRequestFactory {
         }
     }
 
-    public static void sendDataToConf(String apiURL, String userName, String password, String title, String spaceKey, String parentId, String htmlBody) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException {
+    public static void sendDataToConf(String apiURL, String userName, String password, String title, String spaceKey, String parentId, String htmlBody, Consumer<String> successNotificationConsumer, Consumer<String> failNotificationConsumer) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException {
         Map<String, Object> map = buildParam(title, spaceKey, parentId, htmlBody);
-        send(apiURL, map, Constants.CHARSET_UTF_8, userName, password);
+        send(apiURL, map, Constants.CHARSET_UTF_8, userName, password, successNotificationConsumer, failNotificationConsumer);
     }
 
     private static HashMap<String, Object> buildParam(String title, String spaceKey, String parentId, String htmlBody) {
@@ -77,7 +76,7 @@ public class HttpRequestFactory {
         return param;
     }
 
-    public static String send(String url, Map<String, Object> map, String encoding, String userName, String password) throws KeyManagementException, NoSuchAlgorithmException, ClientProtocolException, IOException, KeyStoreException {
+    public static String send(String url, Map<String, Object> map, String encoding, String userName, String password, Consumer<String> successNotificationConsumer, Consumer<String> failNotificationConsumer) throws KeyManagementException, NoSuchAlgorithmException, ClientProtocolException, IOException, KeyStoreException {
         String body = "";
 
         //绕过证书验证，处理https请求
@@ -90,19 +89,19 @@ public class HttpRequestFactory {
         connManager.setDefaultMaxPerRoute(2);
 
         RequestConfig requestConfig = RequestConfig.custom()
-            .setAuthenticationEnabled(true)
-            .setConnectionRequestTimeout(Constants.CONNECTION_REQUEST_TIMEOUT)
-            .setSocketTimeout(Constants.SOCKET_TIMEOUT)
-            .setConnectTimeout(Constants.CONNECT_TIMEOUT)
-            .setRedirectsEnabled(false)
-            .setCookieSpec(CookieSpecs.STANDARD)
-            .build();
+                .setAuthenticationEnabled(true)
+                .setConnectionRequestTimeout(Constants.CONNECTION_REQUEST_TIMEOUT)
+                .setSocketTimeout(Constants.SOCKET_TIMEOUT)
+                .setConnectTimeout(Constants.CONNECT_TIMEOUT)
+                .setRedirectsEnabled(false)
+                .setCookieSpec(CookieSpecs.STANDARD)
+                .build();
 
         CloseableHttpClient client = HttpClients.custom()
-            .setConnectionManager(connManager)
-            .setDefaultRequestConfig(requestConfig)
-            .setSSLSocketFactory(sslConnectionSocketFactory)
-            .build();
+                .setConnectionManager(connManager)
+                .setDefaultRequestConfig(requestConfig)
+                .setSSLSocketFactory(sslConnectionSocketFactory)
+                .build();
 
         //创建post方式请求对象
         HttpPost httpPost = new HttpPost(url);
@@ -110,7 +109,7 @@ public class HttpRequestFactory {
         httpPost.setEntity(new StringEntity(JsonUtils.toJson(map), Constants.MIME_TYPE_APPLICATION_JSON, encoding));
 
         String authorization = Constants.BASIC_AUTH_PREFIX +
-            Base64.getUrlEncoder().encodeToString((userName + ":" + password).getBytes());
+                Base64.getUrlEncoder().encodeToString((userName + ":" + password).getBytes());
         //设置header信息
         //指定报文头【Content-type】、【User-Agent】
         httpPost.setHeader(Constants.HEADER_NAME_CONTENT_TYPE, Constants.MIME_TYPE_APPLICATION_JSON);
@@ -124,18 +123,19 @@ public class HttpRequestFactory {
             HttpEntity entity = response.getEntity();
 
             boolean isSuccess = response.getStatusLine().getStatusCode() == 200 ||
-                response.getStatusLine().getStatusCode() == 201 ||
-                response.getStatusLine().getStatusCode() == 202;
+                    response.getStatusLine().getStatusCode() == 201 ||
+                    response.getStatusLine().getStatusCode() == 202;
             if (!isSuccess) {
-                Messages.showMessageDialog("sync to confluence fail!", "Fail!", Icons.FIELD_ICON);
+                failNotificationConsumer.accept("sync to confluence fail!");
             }
             if (isSuccess) {
-                Messages.showMessageDialog("sync to confluence successful!", "Warning", Icons.WARNING_INTRODUCTION_ICON);
+                successNotificationConsumer.accept("sync to confluence successful!");
             }
             EntityUtils.consume(entity);
             //释放链接
             response.close();
         } catch (Exception e) {
+            failNotificationConsumer.accept("sync to confluence exception: " + e.getMessage());
             e.printStackTrace();
             throw new RuntimeException("execute network request error~");
         } finally {

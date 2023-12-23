@@ -4,19 +4,17 @@ import com.dj.tool.common.ApplicationCache;
 import com.dj.tool.common.CommonUtil;
 import com.dj.tool.common.ExcelOperateUtil;
 import com.dj.tool.common.HttpRequestFactory;
-import com.dj.tool.common.ReviewManagerFactory;
 import com.dj.tool.model.CodeAuditSettingModel;
 import com.dj.tool.model.CommentTableModel;
 import com.dj.tool.model.ReviewCommentInfoModel;
+import com.dj.tool.publisher.DateRefreshMessagePublisher;
 import com.dj.tool.render.CommentTableCellRender;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.util.Icons;
 import com.intellij.util.ui.TextTransferable;
-import icons.MyIcons;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
@@ -43,7 +41,7 @@ public class ManageReviewCommentUI {
     private static final Logger log = Logger.getInstance(ManageReviewCommentUI.class);
 
     private static final Object[] COLUMN_NAMES = {"ID", "Reviewer", "Comments", "Author", "Type",
-        "Severity", "TriggerFactor", "ProjectName", "File", "Line", "CodeFragment", "Time"};
+            "Severity", "TriggerFactor", "ProjectName", "File", "Line", "CodeFragment", "Time"};
     private JButton clearButton;
     private JButton deleteButton;
     private JButton exportButton;
@@ -72,8 +70,8 @@ public class ManageReviewCommentUI {
         List<Object[]> rowDataList = new ArrayList<>();
         for (ReviewCommentInfoModel model : this.tableData) {
             Object[] row = {model.getIdentifier(), model.getReviewer(), model.getComments(), model.getAuthor(), model.getType(),
-                model.getSeverity(), model.getFactor(), model.getProjectName(), model.getFilePath(), model.getLineRange(), model.getContent(),
-                model.getDateTime()
+                    model.getSeverity(), model.getFactor(), model.getProjectName(), model.getFilePath(), model.getLineRange(), model.getContent(),
+                    model.getDateTime()
             };
             rowDataList.add(row);
         }
@@ -144,49 +142,68 @@ public class ManageReviewCommentUI {
     private void bindButtons() {
 
         copyButton.addActionListener(e -> {
+            final Project copyProject = this.project;
+            if (CollectionUtils.isEmpty(this.tableData)) {
+                CodeAuditNotifier.notifyWarning(copyProject, "Has no record to copy");
+            }
             try {
                 String copyData = CommonUtil.copyToString(this.tableData);
-                Messages.showMessageDialog("Copy successfully!", "Copy Finished", Icons.EXPORT_ICON);
+                CodeAuditNotifier.notifyInfo(copyProject, "Copy successfully!");
                 CopyPasteManager.getInstance()
-                    .setContents(new TextTransferable(copyData));
+                        .setContents(new TextTransferable(copyData));
             } catch (Exception ex) {
-                Messages.showErrorDialog("Copy failed! Cause:" + System.lineSeparator() + ex.getMessage(), "Copy Failed");
+                CodeAuditNotifier.notifyWarning(copyProject, "Copy failed! Cause:" + System.lineSeparator() + ex.getMessage());
             }
 
         });
 
         clearButton.addActionListener(e -> {
+            final Project cleanProject = this.project;
             if (new ClearConfirmDialog().showAndGet()) {
                 ApplicationCache.cleanAllCache();
-                ReviewManagerFactory.reloadAllProjectData();
+                DateRefreshMessagePublisher.getInstance(cleanProject).fireDateRefreshExecute("clean code record", cleanProject);
             }
         });
 
         syncConfluenceButton.addActionListener(e -> {
+            final Project syncProject = this.project;
+            if (CollectionUtils.isEmpty(this.tableData)) {
+                CodeAuditNotifier.notifyWarning(syncProject, "Has no record to sync");
+            }
             CodeAuditSettingModel codeAuditSetting = getCodeAuditSetting();
             boolean valid = codeAuditSetting.isValid();
             if (!valid) {
-                Messages.showMessageDialog("Please setting confluence info!", "Setting Warning", MyIcons.Exclamation);
+                CodeAuditNotifier.notifyWarning(syncProject, "Please setting confluence info!");
                 return;
             }
             try {
                 Collection<ReviewCommentInfoModel> allDataList = ApplicationCache.getAllDataList();
                 String data = buildConfluenceFormatString(allDataList);
                 if (StringUtils.isBlank(data)) {
-                    Messages.showMessageDialog("There is no record need to sync!", "Setting Warning", MyIcons.Exclamation);
+                    CodeAuditNotifier.notifyWarning(syncProject, "There is no record need to sync!");
                     return;
                 }
                 HttpRequestFactory.sendDataToConf(codeAuditSetting.getUrl(), codeAuditSetting.getUserName(), codeAuditSetting.getPassword(),
-                    getFormattedTimeForTitle(), codeAuditSetting.getSpaceKey(), codeAuditSetting.getParentId(),  data);
+                        getFormattedTimeForTitle(), codeAuditSetting.getSpaceKey(), codeAuditSetting.getParentId(),
+                        data, successMessage -> {
+                            CodeAuditNotifier.notifyInfo(syncProject, successMessage);
+                        },
+                        failMessage -> {
+                            CodeAuditNotifier.notifyInfo(syncProject, failMessage);
+                        });
 
             } catch (Exception ex) {
-                Messages.showMessageDialog("sync to confluence fail!", "Warning", MyIcons.Exclamation);
+                CodeAuditNotifier.notifyError(syncProject, "Sync to confluence fail!");
                 throw new RuntimeException(ex);
             }
 
         });
 
         exportButton.addActionListener(e -> {
+            final Project exportProject = this.project;
+            if (CollectionUtils.isEmpty(this.tableData)) {
+                CodeAuditNotifier.notifyWarning(exportProject, "Has no record to export");
+            }
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setSelectedFile(new File("[" + this.project.getName() + "]_code_review_report_" + CommonUtil.getFormattedTimeForFileName()));
             fileChooser.setFileFilter(new FileNameExtensionFilter("Excel表格(*.xlsx)", ".xlsx"));
@@ -199,9 +216,9 @@ public class ManageReviewCommentUI {
 
                 try {
                     ExcelOperateUtil.exportExcel(path, this.tableData);
-                    Messages.showMessageDialog("Export successfully!", "Export Finished", MyIcons.Exclamation);
+                    CodeAuditNotifier.notifyInfo(exportProject, "Export successfully!");
                 } catch (Exception ex) {
-                    Messages.showErrorDialog("export failed! Cause:" + System.lineSeparator() + ex.getMessage(), "Export Failed");
+                    CodeAuditNotifier.notifyError(exportProject, "Export failed! Cause:" + System.lineSeparator() + ex.getMessage());
                 }
 
             }
@@ -209,12 +226,14 @@ public class ManageReviewCommentUI {
         });
 
         deleteButton.addActionListener(e -> {
+            final Project deleteButtonProject = this.project;
+            int[] selectedRows = commentTable.getSelectedRows();
+            if (selectedRows.length <= 0) {
+                CodeAuditNotifier.notifyWarning(deleteButtonProject, "Please select item first!");
+                return;
+            }
             if (new DeleteConfirmDialog().showAndGet()) {
                 List<Long> deleteIndentifierList = new ArrayList<>();
-                int[] selectedRows = commentTable.getSelectedRows();
-                if (selectedRows.length <= 0) {
-                    Messages.showMessageDialog("please select item first!", "Warning", MyIcons.Exclamation);
-                }
                 if (selectedRows != null && selectedRows.length > 0) {
                     for (int rowId : selectedRows) {
                         Long valueAt = (Long) commentTable.getValueAt(rowId, 0);
@@ -222,7 +241,8 @@ public class ManageReviewCommentUI {
                     }
                     ApplicationCache.deleteCacheList(deleteIndentifierList);
                 }
-                reloadTableData();
+                DateRefreshMessagePublisher.getInstance(deleteButtonProject).fireDateRefreshExecute("refresh data list", deleteButtonProject);
+
             }
         });
     }
