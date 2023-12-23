@@ -10,6 +10,7 @@ public class DateRefreshMessagePublisher {
     public static final Topic<DateRefreshListener> TOPIC = new Topic<>("code audit - date refresh events", DateRefreshListener.class);
 
     public static DateRefreshMessagePublisher getInstance(Project project) {
+//        return ApplicationManager.getApplication().getService(DateRefreshMessagePublisher.class);
         return project.getActualComponentManager().getService(DateRefreshMessagePublisher.class);
     }
 

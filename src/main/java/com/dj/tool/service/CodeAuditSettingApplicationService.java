@@ -97,7 +97,7 @@ public final class CodeAuditSettingApplicationService implements PersistentState
     public List<ReviewCommentInfoModel> getAllDataList(String projectName) {
         return Optional.ofNullable(this.data).orElseGet(Maps::newHashMap).entrySet()
                 .stream()
-                .filter(entry -> entry.getValue() != null && entry.getValue().getProjectName() != null && !entry.getValue().getProjectName().equalsIgnoreCase(projectName))
+                .filter(entry -> entry.getValue() != null && entry.getValue().getProjectName() != null && entry.getValue().getProjectName().equalsIgnoreCase(projectName))
                 .map(en -> en.getValue())
                 .collect(Collectors.toList());
     }

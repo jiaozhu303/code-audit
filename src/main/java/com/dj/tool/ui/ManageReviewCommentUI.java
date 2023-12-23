@@ -160,6 +160,10 @@ public class ManageReviewCommentUI {
 
         clearButton.addActionListener(e -> {
             final Project cleanProject = this.project;
+            if (CollectionUtils.isEmpty(this.tableData)) {
+                CodeAuditNotifier.notifyWarning(cleanProject, "Has no record to clean");
+                return;
+            }
             if (new ClearConfirmDialog().showAndGet()) {
                 ApplicationCache.cleanAllCache(cleanProject.getName());
                 DateRefreshMessagePublisher.getInstance(cleanProject).fireDateRefreshExecute("clean code record", cleanProject);
