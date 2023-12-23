@@ -15,7 +15,7 @@ public class DateRefreshMessagePublisher {
 //        MyProjectService projectService = ServiceManager.getService(project, MyProjectService.class);
 //        MyModuleService moduleService = ModuleServiceManager.getService(module, MyModuleService.class);
 //        return ApplicationManager.getApplication().getService(DateRefreshMessagePublisher.class);
-        return ServiceManager.getService(project, DateRefreshMessagePublisher.class);
+        return project.getService(DateRefreshMessagePublisher.class);
 //        return project.getActualComponentManager().getService(DateRefreshMessagePublisher.class);
     }
 

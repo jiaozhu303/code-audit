@@ -2,6 +2,10 @@
 
 # Code Audit Tool Changelog
 
+## [2.4.0]
+### Change
+- Replace Deprecated API
+
 ## [2.3.9]
 ### Change
 - Replace Internal API
