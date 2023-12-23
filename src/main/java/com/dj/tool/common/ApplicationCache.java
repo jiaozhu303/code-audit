@@ -7,17 +7,11 @@ import com.google.common.collect.Lists;
 import com.intellij.ide.util.PropertiesComponent;
 import org.apache.commons.collections4.CollectionUtils;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import static com.dj.tool.common.Constants.SETTING_CONF_PARENT_DIR_ID;
-import static com.dj.tool.common.Constants.SETTING_CONF_SPACE_KEY;
-import static com.dj.tool.common.Constants.SETTING_PASSWORD_KEY;
-import static com.dj.tool.common.Constants.SETTING_URL_KEY;
-import static com.dj.tool.common.Constants.SETTING_USER_KEY;
+import static com.dj.tool.common.Constants.*;
 
 public class ApplicationCache {
 
@@ -41,9 +35,9 @@ public class ApplicationCache {
         appComponent.setValue(SETTING_CONF_PARENT_DIR_ID, parentId);
     }
 
-    public static void cleanAllCache() {
+    public static void cleanAllCache(String projectName) {
         CodeAuditSettingApplicationService instance = CodeAuditSettingApplicationService.getInstance();
-        instance.cleanAllCacheData();
+        instance.cleanAllCacheData(projectName);
     }
 
     public static void deleteOneFromCache(Long id) {
@@ -70,16 +64,13 @@ public class ApplicationCache {
         instance.addOneCacheData(model);
     }
 
-    public static Collection<ReviewCommentInfoModel> getAllDataList() {
+    public static List<ReviewCommentInfoModel> getAllDataList(String projectName) {
         CodeAuditSettingApplicationService instance = CodeAuditSettingApplicationService.getInstance();
-        return instance.getAllDataList();
+        return instance.getAllDataList(projectName);
     }
 
     public static List<ReviewCommentInfoModel> getProjectAllData(String projectName) {
-        return Optional.ofNullable(getAllDataList()).orElseGet(Lists::newArrayList)
-            .stream()
-            .filter(item -> item.getProjectName().equalsIgnoreCase(projectName))
-            .collect(Collectors.toList());
+        return Optional.ofNullable(getAllDataList(projectName)).orElseGet(Lists::newArrayList);
     }
 
     public static void updateProjectData(ReviewCommentInfoModel model) {

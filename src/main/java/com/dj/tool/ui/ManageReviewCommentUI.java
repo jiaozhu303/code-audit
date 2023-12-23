@@ -145,6 +145,7 @@ public class ManageReviewCommentUI {
             final Project copyProject = this.project;
             if (CollectionUtils.isEmpty(this.tableData)) {
                 CodeAuditNotifier.notifyWarning(copyProject, "Has no record to copy");
+                return;
             }
             try {
                 String copyData = CommonUtil.copyToString(this.tableData);
@@ -160,7 +161,7 @@ public class ManageReviewCommentUI {
         clearButton.addActionListener(e -> {
             final Project cleanProject = this.project;
             if (new ClearConfirmDialog().showAndGet()) {
-                ApplicationCache.cleanAllCache();
+                ApplicationCache.cleanAllCache(cleanProject.getName());
                 DateRefreshMessagePublisher.getInstance(cleanProject).fireDateRefreshExecute("clean code record", cleanProject);
             }
         });
@@ -169,6 +170,7 @@ public class ManageReviewCommentUI {
             final Project syncProject = this.project;
             if (CollectionUtils.isEmpty(this.tableData)) {
                 CodeAuditNotifier.notifyWarning(syncProject, "Has no record to sync");
+                return;
             }
             CodeAuditSettingModel codeAuditSetting = getCodeAuditSetting();
             boolean valid = codeAuditSetting.isValid();
@@ -176,15 +178,16 @@ public class ManageReviewCommentUI {
                 CodeAuditNotifier.notifyWarning(syncProject, "Please setting confluence info!");
                 return;
             }
+            String projectName = syncProject.getName();
             try {
-                Collection<ReviewCommentInfoModel> allDataList = ApplicationCache.getAllDataList();
+                Collection<ReviewCommentInfoModel> allDataList = ApplicationCache.getAllDataList(projectName);
                 String data = buildConfluenceFormatString(allDataList);
                 if (StringUtils.isBlank(data)) {
                     CodeAuditNotifier.notifyWarning(syncProject, "There is no record need to sync!");
                     return;
                 }
                 HttpRequestFactory.sendDataToConf(codeAuditSetting.getUrl(), codeAuditSetting.getUserName(), codeAuditSetting.getPassword(),
-                        getFormattedTimeForTitle(), codeAuditSetting.getSpaceKey(), codeAuditSetting.getParentId(),
+                        getFormattedTimeForTitle(projectName), codeAuditSetting.getSpaceKey(), codeAuditSetting.getParentId(),
                         data, successMessage -> {
                             CodeAuditNotifier.notifyInfo(syncProject, successMessage);
                         },
@@ -203,6 +206,7 @@ public class ManageReviewCommentUI {
             final Project exportProject = this.project;
             if (CollectionUtils.isEmpty(this.tableData)) {
                 CodeAuditNotifier.notifyWarning(exportProject, "Has no record to export");
+                return;
             }
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setSelectedFile(new File("[" + this.project.getName() + "]_code_review_report_" + CommonUtil.getFormattedTimeForFileName()));

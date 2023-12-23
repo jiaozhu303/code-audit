@@ -13,17 +13,15 @@ import org.apache.commons.collections.MapUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toMap;
 
 @State(name = "CodeAuditSettingService",
-    storages = {
-        @Storage(value = "CodeAuditSettingApplicationService.xml")
-    }
+        storages = {
+                @Storage(value = "CodeAuditSettingApplicationService.xml")
+        }
 )
 public final class CodeAuditSettingApplicationService implements PersistentStateComponent<Map<Long, ReviewCommentInfoModel>> {
 
@@ -68,8 +66,11 @@ public final class CodeAuditSettingApplicationService implements PersistentState
         return ApplicationManager.getApplication().getService(CodeAuditSettingApplicationService.class);
     }
 
-    public void cleanAllCacheData() {
-        this.data = new HashMap<>();
+    public void cleanAllCacheData(String projectName) {
+        this.data = Optional.ofNullable(this.data).orElseGet(Maps::newHashMap).entrySet()
+                .stream()
+                .filter(entry -> entry.getValue() != null && entry.getValue().getProjectName() != null && !entry.getValue().getProjectName().equalsIgnoreCase(projectName))
+                .collect(toMap(en -> en.getKey(), en -> en.getValue(), (l, r) -> l));
     }
 
     public void addOneCacheData(ReviewCommentInfoModel model) {
@@ -93,8 +94,12 @@ public final class CodeAuditSettingApplicationService implements PersistentState
         });
     }
 
-    public Collection<ReviewCommentInfoModel> getAllDataList() {
-        return Optional.ofNullable(this.data).orElseGet(Maps::newHashMap).values();
+    public List<ReviewCommentInfoModel> getAllDataList(String projectName) {
+        return Optional.ofNullable(this.data).orElseGet(Maps::newHashMap).entrySet()
+                .stream()
+                .filter(entry -> entry.getValue() != null && entry.getValue().getProjectName() != null && !entry.getValue().getProjectName().equalsIgnoreCase(projectName))
+                .map(en -> en.getValue())
+                .collect(Collectors.toList());
     }
 
     public void updateItem(ReviewCommentInfoModel model) {

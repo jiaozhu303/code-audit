@@ -20,5 +20,6 @@ public class DateRefreshNotifyListener implements DateRefreshListener {
     public void refresh(String date, Project fireProject) {
         this.ui.reloadTableData();
     }
+
 }
 

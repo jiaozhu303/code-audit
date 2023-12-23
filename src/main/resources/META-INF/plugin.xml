@@ -60,7 +60,7 @@
         <!--        <projectService serviceImplementation="com.dj.tool.service.CodeAuditSettingProjectService"/>-->
         <applicationService serviceImplementation="com.dj.tool.service.CodeAuditSettingApplicationService"/>
         <!--        <projectService serviceImplementation="com.dj.tool.listener.DateRefreshNotifyListener"/>-->
-        <applicationService serviceImplementation="com.dj.tool.publisher.DateRefreshMessagePublisher"/>
+        <projectService serviceImplementation="com.dj.tool.publisher.DateRefreshMessagePublisher"/>
 
         <toolWindow id="CodeRecord"
                     icon="MyIcons.ToolWindow"
