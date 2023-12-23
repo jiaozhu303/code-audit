@@ -70,7 +70,7 @@
         <codeInsight.lineMarkerProvider
                 language=""
                 implementationClass="com.dj.tool.action.LeftMarkIconProvider"/>
-        <notificationGroup id="Code Audit Notification Group"
+        <notificationGroup id="Code Audit Notification"
                            displayType="BALLOON"/>
     </extensions>
     <!--    <applicationListeners>-->
