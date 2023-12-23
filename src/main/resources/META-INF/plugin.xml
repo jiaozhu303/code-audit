@@ -6,11 +6,11 @@
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="jiaozhu303@yeha.net" url="https://www.dj.com">DJ</vendor>
 
-    <product-descriptor
-            code="PCODEAUDIT"
-            release-date="20231223"
-            release-version="202332"
-            optional="true"/>
+<!--    <product-descriptor-->
+<!--            code="PCODEAUDIT"-->
+<!--            release-date="20231223"-->
+<!--            release-version="202332"-->
+<!--            optional="true"/>-->
     <version>2.3.7</version>
     <idea-version since-build="233" until-build="233.*"/>
     <description>
