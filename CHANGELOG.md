@@ -1,6 +1,11 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
 # Code Audit Tool Changelog
+
+## [2.3.9]
+### Change
+- Replace Internal API
+
 ## [2.3.8]
 ### Change
 - change save log way
