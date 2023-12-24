@@ -1,4 +1,4 @@
-# IntelliJ Platform Plugin Template
+# Code Audit
 
 [![official JetBrains project](https://jb.gg/badges/official.svg)][jb:github]
 [![Twitter Follow](https://img.shields.io/badge/follow-%40JBPlatform-1DA1F2?logo=twitter)](https://twitter.com/JBPlatform)
@@ -10,17 +10,14 @@
 
 > **Note**
 >
-> Click the <kbd>Use this template</kbd> button and clone it in IntelliJ IDEA.
+> Click the <kbd>Use this tool</kbd> button and download it in IntelliJ IDEA.
 
 <!-- Plugin description -->
-**IntelliJ Platform Plugin Template** is a repository that provides a pure template to make it easier to create a new plugin project (check the [Creating a repository from a template][gh:template] article).
-
-The main goal of this template is to speed up the setup phase of plugin development for both new and experienced developers by preconfiguring the project scaffold and CI, linking to the proper documentation pages, and keeping everything organized.
-
+**Code Audit** is a free Code Review tool that combines with version management software (Git) and document management software (Confluence) to socially share and discuss code with team members and others.
+Generally, our Code review is to mark the problems in the code, and Code Audit is also, but it can communicate according to the code through a mode like chat or community interaction. And can be linked with IDEA. When someone reviews your code, a chat box will pop up in the lower right corner of your IDEA to tell you in time, and you can also export the review record, or synchronize the review result to confluence, and generate a report. More convenient double disk code.
 [gh:template]: https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template
 <!-- Plugin description end -->
 
-If you're still not quite sure what this is all about, read our introduction: [What is the IntelliJ Platform?][docs:intro]
 
 > **Note**
 >

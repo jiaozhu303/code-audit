@@ -17,25 +17,20 @@
     <description>
         <![CDATA[
             <p>
-                After all, Code Review is a process added in the coding process, which requires a lot of communication. The two sides of review may even have disputes due to different programming concepts, and it is not easy to do a good Code Review for various reasons. So, this tool helps developers improve their code quality and thus their productivity.
-            </p>
-            <p>Includes support for:
+                <b>Code Audit</b>is a free Code Review tool that combines with version management software (Git) and document management software (Confluence) to socially share and discuss code with team members and others.
+Generally, our Code review is to mark the problems in the code, and Code Audit is also, but it can communicate according to the code through a mode like chat or community interaction. And can be linked with IDEA. When someone reviews your code, a chat box will pop up in the lower right corner of your IDEA to tell you in time, and you can also export the review record, or synchronize the review result to confluence, and generate a report. More convenient double disk code.
+ </p>
+            <p>Includes feature:
             <ul>
-                <li>support confluence</li>
-                <li>code completion</li>
-                <li>references</li>
-                <li>refactoring</li>
-                <li>rename</li>
+                <li>support sync to confluence</li>
+                <li>code market</li>
+                <li>log review message</li>
+                <li>export log to excel</li>
             </ul>
             </p>
         ]]>
     </description>
 
-    <change-notes>
-        1.refactor project for compatibility.
-        2.update persistent design
-        3.sync data to confluence design
-    </change-notes>
 
     <depends>com.intellij.modules.platform</depends>
 
