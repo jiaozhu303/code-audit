@@ -2,6 +2,10 @@
 
 # Code Audit Tool Changelog
 
+## [2.4.1]
+### Change
+- Update plugin description
+
 ## [2.4.0]
 ### Change
 - Replace Deprecated API
