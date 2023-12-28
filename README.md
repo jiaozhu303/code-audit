@@ -15,69 +15,31 @@
 <!-- Plugin description -->
 **Code Audit** is a free Code Review tool that combines with version management software (Git) and document management software (Confluence) to socially share and discuss code with team members and others.
 Generally, our Code review is to mark the problems in the code, and Code Audit is also, but it can communicate according to the code through a mode like chat or community interaction. And can be linked with IDEA. When someone reviews your code, a chat box will pop up in the lower right corner of your IDEA to tell you in time, and you can also export the review record, or synchronize the review result to confluence, and generate a report. More convenient double disk code.
-[gh:template]: https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template
+
+**Usage Instructions:**
+1. Download and install this plugin from maketplace.
+2. In the menu bar, tools, find the option "Code Audit", find setting, and open it.
+3. Set the RestFull interface address of Confluence, user authentication information, confluence space key, and id of the parent directory that stores the review result according to the user's own environment.
+   4, the next is to use this Tool, you can in the intelliJ Idea editor, select a piece of problematic code, or text, and then the menu bar, find the "code audit" option in the "code audit tool", click it, or pop up the information panel.
+5. In the information entry panel, you can enter the author, the type of problem, the level of the problem, and some comments on the current code segment.
+   6, you can click the save button, record this problem, and then continue to review other code, if you find any code that needs to be recorded, repeat the above operations.
+7. You can find the list of information recorded by review in the tool window. Among them, the "confluence" button synchronizes the current recorded information to the confluence page according to the style of the list, which can be used as a history record to facilitate the cooperation of multiple people to record problems. It will automatically put the information in your paste version and can be copied anywhere else for record use. When the record is finished, you can select a line and click the delete button, or directly click the "clean" button, everything is clear.
+
+***Meaning Of Using This Tool:***
+- Code reviews share knowledge: 
+    >At the heart of all agile teams is unbeatable flexibility: the ability to cross work off the to-do list and start by all team members. As a result, teams are better able to pivot around new work, with no one being the "critical path." Full stack engineers can handle both front-end and server-side work. As code reviews expose developers to new ideas and techniques, they write better code.
+- Work can be better evaluated through code reviews:
+    >Remember the section on evaluation? Evaluation is a team exercise, and as product knowledge spreads through the team, the team makes better evaluations. As new features are added to existing code, the original developers can provide good feedback and evaluation. In addition, any code reviewer will take into account the complexity of the code base and known concerns. In this way the code reviewer shares the knowledge of the original developer for that part of the code base. This practice allows product knowledge to be shared by more than one person, often making the final evaluation more reliable when it comes time to do it.
+- Code reviews give you a vacation:
+  >No one likes to be the sole contact for a piece of code. Similarly, no one wants to delve into critical code they didn't write themselves - especially if there's an emergency in production. Code reviews share knowledge across the team so that any team member can take over and continue to steer the ship. (We love this analogy at Atlassian!) But here's the point: no single developer is the critical path, which also means team members can take vacations as needed. If you find yourself stuck in product development, code reviews are a great way to free yourself up. Feel free to take a vacation, or feel free to look at other areas of the product.
+- Mentor new engineers through code reviews:
+  >One feature of agile development is that when new members join the team, experienced engineers mentor the new members. Code reviews help facilitate communication about the code base. Often, teams hide product knowledge in code during code reviews. The new members come with fresh eyes and a fresh perspective to examine the codebase's rough edges and legacy flaws. Therefore, code reviews also help to ensure that new insights are reconciled with existing knowledge.
 <!-- Plugin description end -->
 
 
 > **Note**
 >
 > Click the <kbd>Watch</kbd> button on the top to be notified about releases containing new features and fixes.
-
-### Table of contents
-
-In this README, we will highlight the following elements of template-project creation:
-
-- [Getting started](#getting-started)
-- [Gradle configuration](#gradle-configuration)
-- [Plugin template structure](#plugin-template-structure)
-- [Plugin configuration file](#plugin-configuration-file)
-- [Sample code](#sample-code):
-  - listeners – project lifecycle listener
-  - services – project and application-level services
-- [Testing](#testing)
-  - [Functional tests](#functional-tests)
-  - [Code coverage](#code-coverage)
-  - [UI tests](#ui-tests)
-- [Qodana integration](#qodana-integration)
-- [Predefined Run/Debug configurations](#predefined-rundebug-configurations)
-- [Continuous integration](#continuous-integration) based on GitHub Actions
-  - [Dependencies management](#dependencies-management) with Dependabot
-  - [Changelog maintenance](#changelog-maintenance) with the Gradle Changelog Plugin
-  - [Release flow](#release-flow) using GitHub Releases
-  - [Plugin signing](#plugin-signing) with your private certificate
-  - [Publishing the plugin](#publishing-the-plugin) with the Gradle IntelliJ Plugin
-- [FAQ](#faq)
-- [Useful links](#useful-links)
-
-
-## Getting started
-
-Before we dive into plugin development and everything related to it, it's worth mentioning the benefits of using GitHub Templates.
-By creating a new project using the current template, you start with no history or reference to this repository.
-This allows you to create a new repository easily without copying and pasting previous content, clone repositories, or clearing the history manually.
-
-All you have to do is click the <kbd>Use this template</kbd> button (you must be logged in with your GitHub account).
-
-![Use this template][file:use-this-template.png]
-
-After using the template to create your blank project, the [Template Cleanup][file:template_cleanup.yml] workflow will be triggered to override or remove any template-specific configurations, such as the plugin name, current changelog, etc.
-Once this is complete, the project is ready to be cloned to your local environment and opened with [IntelliJ IDEA][jb:download-ij].
-
-The most convenient way for getting your new project from GitHub is the <kbd>Get from VCS</kbd> action available on the Welcome Screen, where you can filter your GitHub  repository by its name.
-
-![Get from Version Control][file:get-from-version-control]
-
-The next step, after opening your project in IntelliJ IDEA, is to set the proper <kbd>SDK</kbd> to Java in version `17` within the [Project Structure settings][docs:project-structure-settings].
-
-![Project Structure — SDK][file:project-structure-sdk.png]
-
-For the last step, you have to manually review the configuration variables described in the [`gradle.properties`][file:gradle.properties] file and *optionally* move sources from the *com.github.username.repository* package to the one that works best for you.
-Then you can get to work implementing your ideas.
-
-> **Note**
->
-> To use Java in your plugin, create the `/src/main/java` directory.
-
 
 ## Gradle configuration
 
