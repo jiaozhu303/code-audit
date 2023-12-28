@@ -3,7 +3,7 @@
 # Code Audit Tool Changelog
 
 
-## [2.4.1]
+## [2.4.2]
 ### Change
 - Update Plugin Usage Instructions For Publish To Marketplace.
 
