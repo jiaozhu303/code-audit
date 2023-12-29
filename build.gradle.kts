@@ -143,8 +143,8 @@ tasks {
 
     publishPlugin {
         dependsOn("patchChangelog")
-        token = "perm:amlhb3podTMwMw==.OTItOTIyMg==.cQto8hTNl0wCRlDfGECx7uXafqDwGO"
-//        token = environment("PUBLISH_TOKEN")
+//        token = "perm:amlhb3podTMwMw==.OTItOTIyMg==.cQto8hTNl0wCRlDfGECx7uXafqDwGO"
+        token = environment("Code_Audit_Auto_Publish_Token")
         // The pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
         // Specify pre-release label to publish the plugin in a custom Release Channel automatically. Read more:
         // https://plugins.jetbrains.com/docs/intellij/deployment.html#specifying-a-release-channel

@@ -3,6 +3,12 @@
 # Code Audit Tool Changelog
 
 
+
+## [2.4.3]
+### Change
+- Support Kotlin Language
+
+
 ## [2.4.2]
 ### Change
 - Update Plugin Usage Instructions For Publish To Marketplace.
