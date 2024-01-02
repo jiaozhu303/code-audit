@@ -23,9 +23,9 @@ Generally, our Code review is to mark the problems in the code, and Code Audit i
             <p><b>Usage Instructions:</b>
             <ul>
                 <li>1. Download and install this plugin from maketplace.</li>
-                <li> 2. In the menu bar, tools, find the option "Code Audit", find setting, and open it.</li>
-                <li> 3. Set the RestFull interface address of Confluence, user authentication information, confluence space key, and id of the parent directory that stores the review result according to the user's own environment.</li>
-                <li> 4, the next is to use this Tool, you can in the intelliJ Idea editor, select a piece of problematic code, or text, and then the menu bar, find the "code audit" option in the "code audit tool", click it, or pop up the information panel.</li>
+                <li>2. In the menu bar, tools, find the option "Code Audit", find setting, and open it.</li>
+                <li>3. Set the RestFull interface address of Confluence, user authentication information, confluence space key, and id of the parent directory that stores the review result according to the user's own environment.</li>
+                <li>4, the next is to use this Tool, you can in the intelliJ Idea editor, select a piece of problematic code, or text, and then the menu bar, find the "code audit" option in the "code audit tool", click it, or pop up the information panel.</li>
                 <li>5. In the information entry panel, you can enter the author, the type of problem, the level of the problem, and some comments on the current code segment.</li>
                 <li>6, you can click the save button, record this problem, and then continue to review other code, if you find any code that needs to be recorded, repeat the above operations.</li>
                 <li>7. You can find the list of information recorded by review in the tool window. Among them, the "confluence" button synchronizes the current recorded information to the confluence page according to the style of the list, which can be used as a history record to facilitate the cooperation of multiple people to record problems. It will automatically put the information in your paste version and can be copied anywhere else for record use. When the record is finished, you can select a line and click the delete button, or directly click the "clean" button, everything is clear.</li>
