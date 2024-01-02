@@ -111,7 +111,7 @@ To configure GitHub secret environment variables, go to the `⚙️ Settings > S
 
 ![Settings > Secrets][file:settings-secrets.png]
 
-## Plugin template structure
+## Plugin structure
 
 A generated IntelliJ Platform Plugin Template repository contains the following content structure:
 
@@ -156,22 +156,56 @@ It provides general information about the plugin, its dependencies, extensions, 
 
 ```xml
 <idea-plugin>
-  <id>org.jetbrains.plugins.template</id>
-  <name>Template</name>
-  <vendor>JetBrains</vendor>
-  
+  <id>com.dj.tool</id>
+  <name>Code Audit</name>
+
+  <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+  <vendor email="jiaozhu303@yeha.net" url="https://www.dj.com">DJ</vendor>
+  <version>2.4.2</version>
+
+
   <depends>com.intellij.modules.platform</depends>
 
-  <resource-bundle>messages.MyBundle</resource-bundle>
-  
-  <extensions defaultExtensionNs="com.intellij">
-    <toolWindow factoryClass="..." id="..."/>
-  </extensions>
+  <actions>
 
-  <applicationListeners>
-    <listener class="..." topic="..."/>
-  </applicationListeners>
+    <group id="code-audit-group" text="Code Audit" description="Code Audit" icon="MyIcons.Code" popup="true">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+      <action id="add-comment" class="com.dj.tool.action.AddComment" text="Code Audit Tool" icon="MyIcons.Action"
+              description="Code Audit tool">
+        <keyboard-shortcut keymap="$default" first-keystroke="alt A"/>
+      </action>
+
+      <action id="code-setting" class="com.dj.tool.action.CodeAuditSetting" text="Code Audit Setting"
+              icon="MyIcons.Setting"
+              description="Code Audit Setting">
+      </action>
+    </group>
+
+  </actions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!--        <projectService serviceImplementation="com.dj.tool.service.CodeAuditSettingProjectService"/>-->
+    <applicationService serviceImplementation="com.dj.tool.service.CodeAuditSettingApplicationService"/>
+    <!--        <projectService serviceImplementation="com.dj.tool.listener.DateRefreshNotifyListener"/>-->
+    <projectService serviceImplementation="com.dj.tool.publisher.DateRefreshMessagePublisher"/>
+
+    <toolWindow id="CodeRecord"
+                icon="MyIcons.ToolWindow"
+                anchor="bottom"
+                doNotActivateOnStart="true"
+                factoryClass="com.dj.tool.action.ManageReviewComment"/>
+    <codeInsight.lineMarkerProvider
+            language=""
+            implementationClass="com.dj.tool.action.LeftMarkIconProvider"/>
+    <notificationGroup id="Code Audit Notification"
+                       displayType="BALLOON"/>
+  </extensions>
+  <!--    <applicationListeners>-->
+  <!--        <listener class="com.dj.tool.listener.DateRefreshNotifyListener"-->
+  <!--                  topic="com.dj.tool.listener.DateRefreshListener"/>-->
+  <!--    </applicationListeners>-->
 </idea-plugin>
+
 ```
 
 You can read more about this file in the [Plugin Configuration File][docs:plugin.xml] section of our documentation.
