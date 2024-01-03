@@ -1,21 +1,27 @@
-package com.dj.tool.render;
+package com.dj.tool.render
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import java.awt.*;
+import java.awt.Color
+import java.awt.Component
+import javax.swing.JTable
+import javax.swing.table.DefaultTableCellRenderer
 
-
-public class CommentTableCellRender extends DefaultTableCellRenderer {
-    @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        boolean cellEditable = table.isCellEditable(row, column);
+class CommentTableCellRender : DefaultTableCellRenderer() {
+    override fun getTableCellRendererComponent(
+        table: JTable,
+        value: Any,
+        isSelected: Boolean,
+        hasFocus: Boolean,
+        row: Int,
+        column: Int
+    ): Component {
+        val cellEditable = table.isCellEditable(row, column)
         if (cellEditable) {
-            this.setBackground(Color.ORANGE);
-            this.setForeground(Color.BLUE);
+            this.background = Color.ORANGE
+            this.foreground = Color.BLUE
         } else {
-            this.setBackground(Color.white);
-            this.setForeground(Color.BLACK);
+            this.background = Color.white
+            this.foreground = Color.BLACK
         }
-        return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
     }
 }

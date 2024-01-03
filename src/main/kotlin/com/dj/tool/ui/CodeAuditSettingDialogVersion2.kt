@@ -1,46 +1,78 @@
-package com.dj.tool.ui;
+package com.dj.tool.ui
 
-import com.dj.tool.model.CodeAuditSettingModel;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
-import org.jetbrains.annotations.Nullable;
+import com.dj.tool.common.ApplicationCache
+import com.dj.tool.model.CodeAuditSettingModel
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.DialogWrapper
+import java.awt.BorderLayout
+import java.awt.Toolkit
+import java.awt.event.KeyEvent
+import javax.swing.*
 
-import javax.swing.*;
-import java.awt.*;
+class CodeAuditSettingDialogVersion2(project: Project?, private val model: CodeAuditSettingModel) :
+    DialogWrapper(project, true) {
 
-public class CodeAuditSettingDialogVersion2 extends DialogWrapper {
+    private var contentPane: JPanel? = null
+    private var buttonOK: JButton? = null
+    private var buttonCancel: JButton? = null
+    private var urlTextField: JTextField? = null
+    private var userNameTextField: JTextField? = null
+    private var passwordTextField: JTextField? = null
+    private var spaceKeyTextField: JTextField? = null
+    private var parentIdTextField: JTextField? = null
 
-    private CodeAuditSettingModel model;
-
-
-
-
-    public CodeAuditSettingDialogVersion2(@Nullable Project project, CodeAuditSettingModel model) {
-        super(project, true);
-        this.model = model;
-        setTitle("Code Audit Setting");
-        init();
+    init {
+        title = "Code Audit Setting"
+        urlTextField!!.text = model!!.url
+        userNameTextField!!.text = model!!.userName
+        passwordTextField!!.text = model!!.password
+        spaceKeyTextField!!.text = model!!.spaceKey
+        parentIdTextField!!.text = model!!.parentId
+        init()
+        buttonOK!!.addActionListener { onOK() }
+        buttonCancel!!.addActionListener { onCancel() }
+        // call onCancel() on ESCAPE
+        contentPane!!.registerKeyboardAction(
+            { onCancel() },
+            KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+            JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
+        )
     }
 
 
-    @Override
-    protected @Nullable JComponent createCenterPanel() {
+    override fun createCenterPanel(): JComponent? {
 
-//        this.urlTextField.setText(this.model.getUrl());
-//        this.userNameTextField.setText(this.model.getUserName());
-//        this.passwordTextField.setText(this.model.getPassword());
-//        this.spaceKeyTextField.setText(this.model.getSpaceKey());
-//        this.parentIdTextField.setText(this.model.getParentId());
+        val screenSize = Toolkit.getDefaultToolkit().screenSize
+        val w = (screenSize.width - 600) / 2
+        val h = (screenSize.height * 95 / 100 - 600) / 2
+        setLocation(w, h)
+        pack()
 
-        JPanel dialogPanel = new JPanel(new BorderLayout(600, 200));
 
-        JLabel label = new JLabel("testing");
-        label.setPreferredSize(new Dimension(600, 200));
-        dialogPanel.add(label, BorderLayout.CENTER);
-//        dialogPanel.add(this.urlTextField);
+        val dialogPanel = JPanel(BorderLayout(600, 600))
+
+//        label.preferredSize = Dimension(600, 200)
+//        dialog.add(label, BorderLayout.CENTER)
+        //        dialogPanel.add(this.urlTextField);
 //        dialogPanel.add(this.userNameTextField);
 //        dialogPanel.add(this.spaceKeyTextField);
-//        dialogPanel.add(this.passwordTextField);
-        return dialogPanel;
+        dialogPanel.add(dialogPanel);
+        return dialogPanel
+    }
+
+    private fun onOK() {
+        ApplicationCache.saveCodeAuditSetting(
+            urlTextField!!.text,
+            userNameTextField!!.text,
+            passwordTextField!!.text,
+            spaceKeyTextField!!.text,
+            parentIdTextField!!.text
+        )
+        dispose()
+    }
+
+    private fun onCancel() {
+        // add your code here if necessary
+        dispose()
     }
 }

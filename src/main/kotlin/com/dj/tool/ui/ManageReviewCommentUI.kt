@@ -1,258 +1,247 @@
-package com.dj.tool.ui;
+package com.dj.tool.ui
 
-import com.dj.tool.common.ApplicationCache;
-import com.dj.tool.common.CommonUtil;
-import com.dj.tool.common.ExcelOperateUtil;
-import com.dj.tool.common.HttpRequestFactory;
-import com.dj.tool.model.CodeAuditSettingModel;
-import com.dj.tool.model.CommentTableModel;
-import com.dj.tool.model.ReviewCommentInfoModel;
-import com.dj.tool.publisher.DateRefreshMessagePublisher;
-import com.dj.tool.render.CommentTableCellRender;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.ide.CopyPasteManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.ComboBox;
-import com.intellij.util.ui.TextTransferable;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
+import com.dj.tool.common.*
+import com.dj.tool.model.CommentTableModel
+import com.dj.tool.model.ReviewCommentInfoModel
+import com.dj.tool.publisher.DateRefreshMessagePublisher
+import com.dj.tool.render.CommentTableCellRender
+import com.dj.tool.ui.CodeAuditNotifier.notifyError
+import com.dj.tool.ui.CodeAuditNotifier.notifyInfo
+import com.dj.tool.ui.CodeAuditNotifier.notifyWarning
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.ide.CopyPasteManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.ComboBox
+import com.intellij.util.ui.TextTransferable
+import org.apache.commons.collections4.CollectionUtils
+import org.apache.commons.lang3.StringUtils
+import java.awt.event.ActionEvent
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
+import java.io.File
+import java.util.*
+import javax.swing.*
+import javax.swing.filechooser.FileNameExtensionFilter
+import javax.swing.table.TableModel
 
-import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+class ManageReviewCommentUI(private val project: Project) {
+    private var clearButton: JButton? = null
+    private var deleteButton: JButton? = null
+    private var exportButton: JButton? = null
+    private var commentTable: JTable? = null
+    var fullPanel: JPanel? = null
+    private var copyButton: JButton? = null
+    private var syncConfluenceButton: JButton? = null
 
-import static com.dj.tool.common.ApplicationCache.getCodeAuditSetting;
-import static com.dj.tool.common.CommonUtil.buildConfluenceFormatString;
-import static com.dj.tool.common.CommonUtil.getFormattedTimeForTitle;
-import static com.dj.tool.common.Constants.*;
+    private var tableData: List<ReviewCommentInfoModel?>
 
-
-public class ManageReviewCommentUI {
-
-    private static final Logger log = Logger.getInstance(ManageReviewCommentUI.class);
-
-    private static final Object[] COLUMN_NAMES = {"ID", "Reviewer", "Comments", "Author", "Type",
-            "Severity", "TriggerFactor", "ProjectName", "File", "Line", "CodeFragment", "Time"};
-    private JButton clearButton;
-    private JButton deleteButton;
-    private JButton exportButton;
-    private JTable commentTable;
-    public JPanel fullPanel;
-    private JButton copyButton;
-    private JButton syncConfluenceButton;
-    private final Project project;
-
-    private List<ReviewCommentInfoModel> tableData;
-
-    public ManageReviewCommentUI(Project project) {
-        this.project = project;
-        this.tableData = ApplicationCache.getProjectAllData(project.getName());
+    init {
+        this.tableData = ApplicationCache.getProjectAllData(project.name)
     }
 
 
-    public void initUI() {
-        bindButtons();
-        reloadTableData();
-        bindTableListeners();
+    fun initUI() {
+        bindButtons()
+        reloadTableData()
+        bindTableListeners()
     }
 
-    public void reloadTableData() {
-        this.tableData = ApplicationCache.getProjectAllData(project.getName());
-        List<Object[]> rowDataList = new ArrayList<>();
-        for (ReviewCommentInfoModel model : this.tableData) {
-            Object[] row = {model.getIdentifier(), model.getReviewer(), model.getComments(), model.getAuthor(), model.getType(),
-                    model.getSeverity(), model.getFactor(), model.getProjectName(), model.getFilePath(), model.getLineRange(), model.getContent(),
-                    model.getDateTime()
-            };
-            rowDataList.add(row);
+    fun reloadTableData() {
+        this.tableData = ApplicationCache.getProjectAllData(project.name)
+        val rowDataList: MutableList<Array<Any?>> = ArrayList()
+        for (model in this.tableData) {
+            val row = arrayOf<Any?>(
+                model!!.identifier, model.reviewer, model.comments, model.author, model.type,
+                model.severity, model.factor, model.projectName, model.filePath, model.getLineRange(), model.content,
+                model.dateTime
+            )
+            rowDataList.add(row)
         }
-        Object[][] rowData = rowDataList.stream().toArray(Object[][]::new);
-        TableModel dataModel = new CommentTableModel(rowData, COLUMN_NAMES);
-        commentTable.setModel(dataModel);
-        commentTable.setEnabled(true);
+        val rowData = rowDataList.toTypedArray();
+        val dataModel: TableModel = CommentTableModel(rowData, COLUMN_NAMES)
+        commentTable!!.model = dataModel
+        commentTable!!.isEnabled = true
 
         // 设置指定列只能通过下拉框选择数据
-        JComboBox<String> typeComboBox = new ComboBox<>();
-        typeComboBox.addItem(TYPE_QUESTION);
-        typeComboBox.addItem(TYPE_ADVICE);
-        typeComboBox.addItem(TYPE_ALLEGATIONS);
-        commentTable.getColumnModel().getColumn(4).setCellEditor(new DefaultCellEditor(typeComboBox));
+        val typeComboBox: JComboBox<String> = ComboBox()
+        typeComboBox.addItem(Constants.TYPE_QUESTION)
+        typeComboBox.addItem(Constants.TYPE_ADVICE)
+        typeComboBox.addItem(Constants.TYPE_ALLEGATIONS)
+        commentTable!!.columnModel.getColumn(4).cellEditor = DefaultCellEditor(typeComboBox)
 
-        JComboBox<String> severityComboBox = new ComboBox<>();
-        severityComboBox.addItem(SEVERITY_WARNING);
-        severityComboBox.addItem(SEVERITY_GENERAL);
-        severityComboBox.addItem(SEVERITY_SERIOUS);
-        commentTable.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(severityComboBox));
+        val severityComboBox: JComboBox<String> = ComboBox()
+        severityComboBox.addItem(Constants.SEVERITY_WARNING)
+        severityComboBox.addItem(Constants.SEVERITY_GENERAL)
+        severityComboBox.addItem(Constants.SEVERITY_SERIOUS)
+        commentTable!!.columnModel.getColumn(5).cellEditor = DefaultCellEditor(severityComboBox)
 
-        JComboBox<String> factorComboBox = new ComboBox<>();
-        factorComboBox.addItem(FACTOR_BASIC);
-        factorComboBox.addItem(FACTOR_BUSINESS);
-        factorComboBox.addItem(FACTOR_SECURITY);
-        TableColumn column = commentTable.getColumnModel().getColumn(6);
-        column.setCellEditor(new DefaultCellEditor(factorComboBox));
+        val factorComboBox: JComboBox<String> = ComboBox()
+        factorComboBox.addItem(Constants.FACTOR_BASIC)
+        factorComboBox.addItem(Constants.FACTOR_BUSINESS)
+        factorComboBox.addItem(Constants.FACTOR_SECURITY)
+        val column = commentTable!!.columnModel.getColumn(6)
+        column.cellEditor = DefaultCellEditor(factorComboBox)
 
 
-        commentTable.getModel().addTableModelListener(new TableModelListener() {
-            @Override
-            public void tableChanged(TableModelEvent e) {
-                log.info("table changed...");
-                int row = e.getFirstRow();
-                Long identifier = (Long) commentTable.getValueAt(row, 0);
-                String reviewer = (String) commentTable.getValueAt(row, 1);
-                String comments = (String) commentTable.getValueAt(row, 2);
-                String author = (String) commentTable.getValueAt(row, 3);
-                String type = (String) commentTable.getValueAt(row, 4);
-                String severity = (String) commentTable.getValueAt(row, 5);
-                String factor = (String) commentTable.getValueAt(row, 6);
-                ReviewCommentInfoModel model = new ReviewCommentInfoModel();
-                model.setIdentifier(identifier);
-                model.setReviewer(reviewer);
-                model.setComments(comments);
-                model.setAuthor(author);
-                model.setType(type);
-                model.setSeverity(severity);
-                model.setFactor(factor);
-                ApplicationCache.updateProjectData(model);
-            }
-        });
+        commentTable!!.model.addTableModelListener { e ->
+            log.info("table changed...")
+            val row = e.firstRow
+            val identifier = commentTable!!.getValueAt(row, 0) as Long
+            val reviewer = commentTable!!.getValueAt(row, 1) as String
+            val comments = commentTable!!.getValueAt(row, 2) as String
+            val author = commentTable!!.getValueAt(row, 3) as String
+            val type = commentTable!!.getValueAt(row, 4) as String
+            val severity = commentTable!!.getValueAt(row, 5) as String
+            val factor = commentTable!!.getValueAt(row, 6) as String
+            val model = ReviewCommentInfoModel()
+            model.identifier = identifier
+            model.reviewer = reviewer
+            model.comments = comments
+            model.author = author
+            model.type = type
+            model.severity = severity
+            model.factor = factor
+            ApplicationCache.updateProjectData(model)
+        }
     }
 
-    private void bindTableListeners() {
+    private fun bindTableListeners() {
         // 指定可编辑列颜色变更
-        commentTable.setDefaultRenderer(Object.class, new CommentTableCellRender());
+        commentTable!!.setDefaultRenderer(Any::class.java, CommentTableCellRender())
 
         // 双击跳转到源码位置
-        commentTable.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
+        commentTable!!.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                super.mouseClicked(e)
             }
-        });
+        })
     }
 
-    private void bindButtons() {
-
-        copyButton.addActionListener(e -> {
-            final Project copyProject = this.project;
+    private fun bindButtons() {
+        copyButton!!.addActionListener { e: ActionEvent? ->
+            val copyProject = this.project
             if (CollectionUtils.isEmpty(this.tableData)) {
-                CodeAuditNotifier.notifyWarning(copyProject, "Has no record to copy");
-                return;
+                notifyWarning(copyProject, "Has no record to copy")
+                return@addActionListener
             }
             try {
-                String copyData = CommonUtil.copyToString(this.tableData);
-                CodeAuditNotifier.notifyInfo(copyProject, "Copy successfully!");
+                val copyData = CommonUtil.copyToString(this.tableData)
+                notifyInfo(copyProject, "Copy successfully!")
                 CopyPasteManager.getInstance()
-                        .setContents(new TextTransferable(copyData));
-            } catch (Exception ex) {
-                CodeAuditNotifier.notifyWarning(copyProject, "Copy failed! Cause:" + System.lineSeparator() + ex.getMessage());
+                    .setContents(TextTransferable(java.lang.String(copyData)))
+            } catch (ex: Exception) {
+                notifyWarning(copyProject, "Copy failed! Cause:" + System.lineSeparator() + ex.message)
             }
+        }
 
-        });
-
-        clearButton.addActionListener(e -> {
-            final Project cleanProject = this.project;
+        clearButton!!.addActionListener { e: ActionEvent? ->
+            val cleanProject = this.project
             if (CollectionUtils.isEmpty(this.tableData)) {
-                CodeAuditNotifier.notifyWarning(cleanProject, "Has no record to clean");
-                return;
+                notifyWarning(cleanProject, "Has no record to clean")
+                return@addActionListener
             }
-            if (new ClearConfirmDialog().showAndGet()) {
-                ApplicationCache.cleanAllCache(cleanProject.getName());
-                DateRefreshMessagePublisher.getInstance(cleanProject).fireDateRefreshExecute("clean code record", cleanProject);
+            if (ClearConfirmDialog().showAndGet()) {
+                ApplicationCache.cleanAllCache(cleanProject.name)
+                DateRefreshMessagePublisher.getInstance(cleanProject)
+                    .fireDateRefreshExecute("clean code record", cleanProject)
             }
-        });
+        }
 
-        syncConfluenceButton.addActionListener(e -> {
-            final Project syncProject = this.project;
+        syncConfluenceButton!!.addActionListener { e: ActionEvent? ->
+            val syncProject = this.project
             if (CollectionUtils.isEmpty(this.tableData)) {
-                CodeAuditNotifier.notifyWarning(syncProject, "Has no record to sync");
-                return;
+                notifyWarning(syncProject, "Has no record to sync")
+                return@addActionListener
             }
-            CodeAuditSettingModel codeAuditSetting = getCodeAuditSetting();
-            boolean valid = codeAuditSetting.isValid();
+            val codeAuditSetting = ApplicationCache.codeAuditSetting
+            val valid = codeAuditSetting.isValid
             if (!valid) {
-                CodeAuditNotifier.notifyWarning(syncProject, "Please setting confluence info!");
-                return;
+                notifyWarning(syncProject, "Please setting confluence info!")
+                return@addActionListener
             }
-            String projectName = syncProject.getName();
+            val projectName = syncProject.name
             try {
-                Collection<ReviewCommentInfoModel> allDataList = ApplicationCache.getAllDataList(projectName);
-                String data = buildConfluenceFormatString(allDataList);
+                val allDataList: List<ReviewCommentInfoModel?> = ApplicationCache.getAllDataList(projectName)
+                val data = CommonUtil.buildConfluenceFormatString(allDataList)
                 if (StringUtils.isBlank(data)) {
-                    CodeAuditNotifier.notifyWarning(syncProject, "There is no record need to sync!");
-                    return;
+                    notifyWarning(syncProject, "There is no record need to sync!")
+                    return@addActionListener
                 }
-                HttpRequestFactory.sendDataToConf(codeAuditSetting.getUrl(), codeAuditSetting.getUserName(), codeAuditSetting.getPassword(),
-                        getFormattedTimeForTitle(projectName), codeAuditSetting.getSpaceKey(), codeAuditSetting.getParentId(),
-                        data, successMessage -> {
-                            CodeAuditNotifier.notifyInfo(syncProject, successMessage);
-                        },
-                        failMessage -> {
-                            CodeAuditNotifier.notifyInfo(syncProject, failMessage);
-                        });
-
-            } catch (Exception ex) {
-                CodeAuditNotifier.notifyError(syncProject, "Sync to confluence fail!");
-                throw new RuntimeException(ex);
+                HttpRequestFactory.sendDataToConf(codeAuditSetting.url,
+                    codeAuditSetting.userName,
+                    codeAuditSetting.password,
+                    CommonUtil.getFormattedTimeForTitle(projectName),
+                    codeAuditSetting.spaceKey,
+                    codeAuditSetting.parentId,
+                    data,
+                    { successMessage: String? ->
+                        notifyInfo(syncProject, successMessage)
+                    },
+                    { failMessage: String? ->
+                        notifyError(syncProject, failMessage)
+                    })
+            } catch (ex: Exception) {
+                notifyError(syncProject, "Sync to confluence fail!")
+                throw RuntimeException(ex)
             }
+        }
 
-        });
-
-        exportButton.addActionListener(e -> {
-            final Project exportProject = this.project;
+        exportButton!!.addActionListener { e: ActionEvent? ->
+            val exportProject = this.project
             if (CollectionUtils.isEmpty(this.tableData)) {
-                CodeAuditNotifier.notifyWarning(exportProject, "Has no record to export");
-                return;
+                notifyWarning(exportProject, "Has no record to export")
+                return@addActionListener
             }
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setSelectedFile(new File("[" + this.project.getName() + "]_code_review_report_" + CommonUtil.getFormattedTimeForFileName()));
-            fileChooser.setFileFilter(new FileNameExtensionFilter("Excel表格(*.xlsx)", ".xlsx"));
-            int saveDialog = fileChooser.showSaveDialog(fullPanel);
+            val fileChooser = JFileChooser()
+            fileChooser.selectedFile =
+                File("[" + project.name + "]_code_review_report_" + CommonUtil.formattedTimeForFileName)
+            fileChooser.fileFilter = FileNameExtensionFilter("Excel表格(*.xlsx)", ".xlsx")
+            val saveDialog = fileChooser.showSaveDialog(fullPanel)
             if (saveDialog == JFileChooser.APPROVE_OPTION) {
-                String path = fileChooser.getSelectedFile().getPath();
-                if (!path.toLowerCase().endsWith(".xlsx")) {
-                    path += ".xlsx";
+                var path = fileChooser.selectedFile.path
+                if (!path.lowercase(Locale.getDefault()).endsWith(".xlsx")) {
+                    path += ".xlsx"
                 }
 
                 try {
-                    ExcelOperateUtil.exportExcel(path, this.tableData);
-                    CodeAuditNotifier.notifyInfo(exportProject, "Export successfully!");
-                } catch (Exception ex) {
-                    CodeAuditNotifier.notifyError(exportProject, "Export failed! Cause:" + System.lineSeparator() + ex.getMessage());
+                    ExcelOperateUtil.exportExcel(path, this.tableData)
+                    notifyInfo(exportProject, "Export successfully!")
+                } catch (ex: Exception) {
+                    notifyError(exportProject, "Export failed! Cause:" + System.lineSeparator() + ex.message)
                 }
-
             }
+        }
 
-        });
-
-        deleteButton.addActionListener(e -> {
-            final Project deleteButtonProject = this.project;
-            int[] selectedRows = commentTable.getSelectedRows();
-            if (selectedRows.length <= 0) {
-                CodeAuditNotifier.notifyWarning(deleteButtonProject, "Please select item first!");
-                return;
+        deleteButton!!.addActionListener { e: ActionEvent? ->
+            val deleteButtonProject = this.project
+            val selectedRows = commentTable!!.selectedRows
+            if (selectedRows!!.size <= 0) {
+                notifyWarning(deleteButtonProject, "Please select item first!")
+                return@addActionListener
             }
-            if (new DeleteConfirmDialog().showAndGet()) {
-                List<Long> deleteIndentifierList = new ArrayList<>();
-                if (selectedRows != null && selectedRows.length > 0) {
-                    for (int rowId : selectedRows) {
-                        Long valueAt = (Long) commentTable.getValueAt(rowId, 0);
-                        deleteIndentifierList.add(valueAt);
+            if (DeleteConfirmDialog().showAndGet()) {
+                val deleteIndentifierList: MutableList<Long> = ArrayList()
+                if (selectedRows != null && selectedRows.size > 0) {
+                    for (rowId in selectedRows) {
+                        val valueAt = commentTable!!.getValueAt(rowId, 0) as Long
+                        deleteIndentifierList.add(valueAt)
                     }
-                    ApplicationCache.deleteCacheList(deleteIndentifierList);
+                    ApplicationCache.deleteCacheList(deleteIndentifierList)
                 }
-                DateRefreshMessagePublisher.getInstance(deleteButtonProject).fireDateRefreshExecute("refresh data list", deleteButtonProject);
-
+                DateRefreshMessagePublisher.getInstance(deleteButtonProject)
+                    .fireDateRefreshExecute("refresh data list", deleteButtonProject)
             }
-        });
+        }
     }
 
+    companion object {
+        private val log = Logger.getInstance(
+            ManageReviewCommentUI::class.java
+        )
+
+        private val COLUMN_NAMES = arrayOf<Any?>(
+            "ID", "Reviewer", "Comments", "Author", "Type",
+            "Severity", "TriggerFactor", "ProjectName", "File", "Line", "CodeFragment", "Time"
+        )
+    }
 }

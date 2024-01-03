@@ -1,28 +1,31 @@
-package com.dj.tool.ui;
+package com.dj.tool.ui
 
-import com.intellij.notification.NotificationGroupManager;
-import com.intellij.notification.NotificationType;
-import com.intellij.openapi.project.Project;
+import com.intellij.notification.NotificationGroupManager
+import com.intellij.notification.NotificationType
+import com.intellij.openapi.project.Project
 
-public class CodeAuditNotifier {
-    public static void notifyError(Project project, String content) {
+object CodeAuditNotifier {
+    @JvmStatic
+    fun notifyError(project: Project?, content: String?) {
         NotificationGroupManager.getInstance()
-                .getNotificationGroup("Code Audit Notification")
-                .createNotification(content, NotificationType.ERROR)
-                .notify(project);
+            .getNotificationGroup("Code Audit Notification")
+            .createNotification(content!!, NotificationType.ERROR)
+            .notify(project)
     }
 
-    public static void notifyWarning(Project project, String content) {
+    @JvmStatic
+    fun notifyWarning(project: Project?, content: String?) {
         NotificationGroupManager.getInstance()
-                .getNotificationGroup("Code Audit Notification")
-                .createNotification(content, NotificationType.WARNING)
-                .notify(project);
+            .getNotificationGroup("Code Audit Notification")
+            .createNotification(content!!, NotificationType.WARNING)
+            .notify(project)
     }
 
-    public static void notifyInfo(Project project, String content) {
+    @JvmStatic
+    fun notifyInfo(project: Project?, content: String?) {
         NotificationGroupManager.getInstance()
-                .getNotificationGroup("Code Audit Notification")
-                .createNotification(content, NotificationType.INFORMATION)
-                .notify(project);
+            .getNotificationGroup("Code Audit Notification")
+            .createNotification(content!!, NotificationType.INFORMATION)
+            .notify(project)
     }
 }

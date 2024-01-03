@@ -1,164 +1,159 @@
-package com.dj.tool.common;
+package com.dj.tool.common
 
-import com.dj.tool.model.ReviewCommentInfoModel;
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import com.dj.tool.common.CommonUtil.closeQuitely
+import com.dj.tool.model.ReviewCommentInfoModel
+import org.apache.poi.ss.usermodel.BorderStyle
+import org.apache.poi.xssf.usermodel.XSSFCellStyle
+import org.apache.poi.xssf.usermodel.XSSFRow
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.InputStream
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+object ExcelOperateUtil {
+    @Throws(Exception::class)
+    fun importExcel(path: String?): List<ReviewCommentInfoModel> {
+        val models: MutableList<ReviewCommentInfoModel> = ArrayList()
 
-
-public class ExcelOperateUtil {
-
-    public static List<ReviewCommentInfoModel> importExcel(String path) throws Exception {
-        List<ReviewCommentInfoModel> models = new ArrayList<>();
-
-        InputStream xlsFile = null;
-        XSSFWorkbook workbook = null;
+        var xlsFile: InputStream? = null
+        var workbook: XSSFWorkbook? = null
         try {
-            xlsFile = new FileInputStream(path);
+            xlsFile = FileInputStream(path)
             // 获得工作簿对象
-            workbook = new XSSFWorkbook(xlsFile);
+            workbook = XSSFWorkbook(xlsFile)
             // 获得所有工作表,0指第一个表格
-            XSSFSheet sheet = workbook.getSheet("Review Comments");
+            val sheet = workbook.getSheet("Review Comments")
 
-            int lastRowNum = sheet.getLastRowNum();
+            val lastRowNum = sheet.lastRowNum
             if (lastRowNum < 10) {
-                return models;
+                return models
             }
 
 
-            for (int i = 10; i <= lastRowNum; i++) {
-                XSSFRow row = sheet.getRow(i);
+            for (i in 10..lastRowNum) {
+                val row = sheet.getRow(i)
                 try {
-                    ReviewCommentInfoModel model = new ReviewCommentInfoModel();
-                    String identifier = row.getCell(0).getStringCellValue();
-                    model.setIdentifier(Long.valueOf(identifier));
-                    model.setReviewer(row.getCell(1).getStringCellValue());
-                    model.setComments(row.getCell(2).getStringCellValue());
-                    model.setType(row.getCell(3).getStringCellValue());
-                    model.setSeverity(row.getCell(4).getStringCellValue());
-                    model.setFactor(row.getCell(5).getStringCellValue());
-                    model.setFilePath(row.getCell(7).getStringCellValue());
-                    model.setProjectName(row.getCell(6).getStringCellValue());
+                    val model = ReviewCommentInfoModel()
+                    val identifier = row.getCell(0).stringCellValue
+                    model.identifier = identifier.toLong()
+                    model.reviewer = row.getCell(1).stringCellValue
+                    model.comments = row.getCell(2).stringCellValue
+                    model.type = row.getCell(3).stringCellValue
+                    model.severity = row.getCell(4).stringCellValue
+                    model.factor = row.getCell(5).stringCellValue
+                    model.filePath = row.getCell(7).stringCellValue
+                    model.projectName = row.getCell(6).stringCellValue
 
-                    String lineRange = row.getCell(8).getStringCellValue();
-                    String[] split = lineRange.split("~");
-                    model.setStartLine(Integer.parseInt(split[0].trim()));
-                    model.setEndLine(Integer.parseInt(split[1].trim()));
-                    model.setAuthor(row.getCell(10).getStringCellValue());
-                    model.setContent(row.getCell(9).getStringCellValue());
-                    model.setDateTime(row.getCell(11).getStringCellValue());
-                    models.add(model);
-                } catch (Exception exx) {
-                    exx.printStackTrace();
+                    val lineRange = row.getCell(8).stringCellValue
+                    val split = lineRange.split("~".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                    model.startLine = split[0].trim { it <= ' ' }.toInt()
+                    model.endLine = split[1].trim { it <= ' ' }.toInt()
+                    model.author = row.getCell(10).stringCellValue
+                    model.content = row.getCell(9).stringCellValue
+                    model.dateTime = row.getCell(11).stringCellValue
+                    models.add(model)
+                } catch (exx: Exception) {
+                    exx.printStackTrace()
                 }
             }
-        } catch (Exception ex) {
-            throw new Exception(ex);
+        } catch (ex: Exception) {
+            throw Exception(ex)
         } finally {
-            CommonUtil.closeQuitely(xlsFile);
-            CommonUtil.closeQuitely(workbook);
+            closeQuitely(xlsFile)
+            closeQuitely(workbook)
         }
 
-        return models;
+        return models
     }
 
-    public static void exportExcel(String path, List<ReviewCommentInfoModel> commentInfoModels) throws Exception {
-        File destFile = new File(path);
+    @Throws(Exception::class)
+    fun exportExcel(path: String?, commentInfoModels: List<ReviewCommentInfoModel?>) {
+        val destFile = File(path)
 
-        InputStream xlsFile = null;
-        FileOutputStream fileOutputStream = null;
-        XSSFWorkbook workbook = null;
+        var xlsFile: InputStream? = null
+        var fileOutputStream: FileOutputStream? = null
+        var workbook: XSSFWorkbook? = null
         try {
-            xlsFile = ExcelOperateUtil.class.getClassLoader().getResourceAsStream("code-review-result.xlsx");
+            xlsFile = ExcelOperateUtil::class.java.classLoader.getResourceAsStream("code-review-result.xlsx")
             // 获得工作簿对象
-            workbook = new XSSFWorkbook(xlsFile);
+            workbook = XSSFWorkbook(xlsFile)
             // 获得所有工作表,0指第一个表格
-            XSSFSheet sheet = workbook.getSheet("Review Comments");
+            val sheet = workbook.getSheet("Review Comments")
 
 
             //设置边框
-            XSSFCellStyle cellStyle = workbook.createCellStyle();
-            cellStyle.setBorderBottom(BorderStyle.THIN); // 底部边框
-            cellStyle.setBorderLeft(BorderStyle.THIN);  // 左边边框
-            cellStyle.setBorderRight(BorderStyle.THIN); // 右边边框
-            cellStyle.setBorderTop(BorderStyle.THIN); // 上边边框
+            val cellStyle = workbook.createCellStyle()
+            cellStyle.borderBottom = BorderStyle.THIN // 底部边框
+            cellStyle.borderLeft = BorderStyle.THIN // 左边边框
+            cellStyle.borderRight = BorderStyle.THIN // 右边边框
+            cellStyle.borderTop = BorderStyle.THIN // 上边边框
 
 
             // 从0计数，从第11行开始写（index为10）
-            int rowIndex = 9;
-            for (ReviewCommentInfoModel value : commentInfoModels) {
-                XSSFRow sheetRow = sheet.createRow(rowIndex);
-                buildCell(sheetRow, cellStyle, 0, String.valueOf(value.getIdentifier()));
-                buildCell(sheetRow, cellStyle, 1, value.getReviewer());
-                buildCell(sheetRow, cellStyle, 2, value.getComments());
-                buildCell(sheetRow, cellStyle, 3, value.getType());
-                buildCell(sheetRow, cellStyle, 4, value.getSeverity());
-                buildCell(sheetRow, cellStyle, 5, value.getFactor());
-                buildCell(sheetRow, cellStyle, 6, value.getProjectName());
-                buildCell(sheetRow, cellStyle, 7, value.getFilePath());
-                buildCell(sheetRow, cellStyle, 8, value.getLineRange());
-                buildCell(sheetRow, cellStyle, 9, value.getContent());
-                buildCell(sheetRow, cellStyle, 10, value.getAuthor());
-                buildCell(sheetRow, cellStyle, 11, value.getDateTime());
-                buildCell(sheetRow, cellStyle, 12, "");
-                buildCell(sheetRow, cellStyle, 13, "");
-                buildCell(sheetRow, cellStyle, 14, "");
-                buildCell(sheetRow, cellStyle, 15, "");
+            var rowIndex = 9
+            for (value in commentInfoModels) {
+                val sheetRow = sheet.createRow(rowIndex)
+                buildCell(sheetRow, cellStyle, 0, value!!.identifier.toString())
+                buildCell(sheetRow, cellStyle, 1, value.reviewer)
+                buildCell(sheetRow, cellStyle, 2, value.comments)
+                buildCell(sheetRow, cellStyle, 3, value.type)
+                buildCell(sheetRow, cellStyle, 4, value.severity)
+                buildCell(sheetRow, cellStyle, 5, value.factor)
+                buildCell(sheetRow, cellStyle, 6, value.projectName)
+                buildCell(sheetRow, cellStyle, 7, value.filePath)
+                buildCell(sheetRow, cellStyle, 8, value.getLineRange())
+                buildCell(sheetRow, cellStyle, 9, value.content)
+                buildCell(sheetRow, cellStyle, 10, value.author)
+                buildCell(sheetRow, cellStyle, 11, value.dateTime)
+                buildCell(sheetRow, cellStyle, 12, "")
+                buildCell(sheetRow, cellStyle, 13, "")
+                buildCell(sheetRow, cellStyle, 14, "")
+                buildCell(sheetRow, cellStyle, 15, "")
 
-                rowIndex++;
+                rowIndex++
             }
 
             //将excel写入
-            fileOutputStream = new FileOutputStream(destFile);
-            workbook.write(fileOutputStream);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception(e);
+            fileOutputStream = FileOutputStream(destFile)
+            workbook.write(fileOutputStream)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw Exception(e)
         } finally {
-            CommonUtil.closeQuitely(xlsFile);
-            CommonUtil.closeQuitely(fileOutputStream);
-            CommonUtil.closeQuitely(workbook);
+            closeQuitely(xlsFile)
+            closeQuitely(fileOutputStream)
+            closeQuitely(workbook)
         }
     }
 
-    private static void buildCell(XSSFRow sheetRow, XSSFCellStyle cellStyle, int cellColumnIndex, String value) {
-        XSSFCell cell = sheetRow.createCell(cellColumnIndex);
-        cell.setCellValue(value);
-        cell.setCellStyle(cellStyle);
+    private fun buildCell(sheetRow: XSSFRow, cellStyle: XSSFCellStyle, cellColumnIndex: Int, value: String?) {
+        val cell = sheetRow.createCell(cellColumnIndex)
+        cell.setCellValue(value)
+        cell.cellStyle = cellStyle
     }
 
-    private static void copyFile(File src, File dest) throws Exception {
-        FileInputStream in = null;
-        FileOutputStream out = null;
+    @Throws(Exception::class)
+    private fun copyFile(src: File, dest: File) {
+        var `in`: FileInputStream? = null
+        var out: FileOutputStream? = null
         try {
-            in = new FileInputStream(src);
-            out = new FileOutputStream(dest);
-            byte[] buffer = new byte[2048];
+            `in` = FileInputStream(src)
+            out = FileOutputStream(dest)
+            val buffer = ByteArray(2048)
             while (true) {
-                int ins = in.read(buffer);
+                val ins = `in`.read(buffer)
                 if (ins == -1) {
-                    break;
+                    break
                 }
-                out.write(buffer, 0, ins);
+                out.write(buffer, 0, ins)
             }
-            out.flush();
-        } catch (Exception e) {
-            throw new Exception("copy failed", e);
+            out.flush()
+        } catch (e: Exception) {
+            throw Exception("copy failed", e)
         } finally {
-            CommonUtil.closeQuitely(in);
-            CommonUtil.closeQuitely(out);
+            closeQuitely(`in`)
+            closeQuitely(out)
         }
     }
-
 }

@@ -1,21 +1,12 @@
-package com.dj.tool.model;
+package com.dj.tool.model
 
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.DefaultTableModel
 
-
-public class CommentTableModel extends DefaultTableModel {
-
-    public CommentTableModel(Object[][] data, Object[] columnNames) {
-        super(data, columnNames);
-    }
-
-    @Override
-    public boolean isCellEditable(int row, int column) {
+class CommentTableModel(data: Array<Array<Any?>>, columnNames: Array<Any?>?) : DefaultTableModel(data, columnNames) {
+    override fun isCellEditable(row: Int, column: Int): Boolean {
         if (column > 0 && column < 7) {
-            return true;
+            return true
         }
-        return false;
+        return false
     }
-
-
 }

@@ -1,66 +1,64 @@
-package com.dj.tool.common;
+package com.dj.tool.common
 
-import com.dj.tool.model.ReviewCommentInfoModel;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
+import com.dj.tool.model.ReviewCommentInfoModel
+import org.apache.commons.compress.utils.Lists
+import org.apache.commons.lang3.StringUtils
+import java.io.Closeable
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.stream.Collectors
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
-
-
-public class CommonUtil {
-
-    public static void closeQuitely(Closeable closeable) {
+object CommonUtil {
+    @JvmStatic
+    fun closeQuitely(closeable: Closeable?) {
         if (closeable == null) {
-            return;
+            return
         }
 
         try {
-            closeable.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+            closeable.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
     }
 
-    public static String copyToString(List<ReviewCommentInfoModel> cachedComments) {
-        return Optional.ofNullable(cachedComments).orElseGet(ArrayList::new)
-                .stream()
-                .map(ReviewCommentInfoModel::toCopyString)
-                .reduce("", (a, b) -> a + b);
+    fun copyToString(cachedComments: List<ReviewCommentInfoModel?>): String {
+        return Optional.ofNullable(cachedComments).orElseGet { ArrayList() }
+            .stream()
+            .map { obj: ReviewCommentInfoModel? -> obj?.toCopyString() ?: "" }
+            .reduce("") { a: String, b: String -> a + b }
     }
 
-    private static final ThreadLocal<SimpleDateFormat> SDF = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+    private val SDF: ThreadLocal<SimpleDateFormat> = ThreadLocal.withInitial { SimpleDateFormat("yyyy-MM-dd HH:mm:ss") }
 
-    public static String time2String(long millis) {
-        return SDF.get().format(new Date(millis));
+    fun time2String(millis: Long): String {
+        return SDF.get().format(Date(millis))
     }
 
-    public static String getFormattedTimeForFileName() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-        return simpleDateFormat.format(new Date());
+    val formattedTimeForFileName: String
+        get() {
+            val simpleDateFormat = SimpleDateFormat("yyyyMMddHHmmss")
+            return simpleDateFormat.format(Date())
+        }
+
+    fun getFormattedTimeForTitle(projectName: String): String {
+        val simpleDateFormat = SimpleDateFormat("yyyy.MM.dd-HH.mm.ss")
+        return simpleDateFormat.format(Date()) + "【" + projectName + "】"
     }
 
-    public static String getFormattedTimeForTitle(String projectName) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd-HH.mm.ss");
-        return simpleDateFormat.format(new Date()) + "【" + projectName + "】";
+    fun buildConfluenceFormatString(dataList: List<ReviewCommentInfoModel?>): String {
+        val stringDataList = Optional.ofNullable(dataList)
+            .orElseGet { Lists.newArrayList() }
+            .stream()
+            .filter { obj: ReviewCommentInfoModel? -> Objects.nonNull(obj) }
+            .map { obj: ReviewCommentInfoModel? -> obj?.toSyncString() }
+            .filter { cs: String? -> StringUtils.isNotBlank(cs) }
+            .collect(Collectors.toList())
+
+        val taskList = stringDataList.stream()
+            .map { task: String? -> task?.let { ConfluenceTaskItem(stringDataList.indexOf(task), it) } }
+            .collect(Collectors.toList())
+        return ConfluenceTaskListFactory(taskList).toString()
     }
-
-    public static String buildConfluenceFormatString(Collection<ReviewCommentInfoModel> dataList) {
-        List<String> stringDataList = Optional.ofNullable(dataList)
-                .orElseGet(Lists::newArrayList)
-                .stream()
-                .filter(Objects::nonNull)
-                .map(ReviewCommentInfoModel::toSyncString)
-                .filter(StringUtils::isNotBlank)
-                .collect(Collectors.toList());
-
-        List<ConfluenceTaskItem> taskList = stringDataList.stream()
-                .map(task -> new ConfluenceTaskItem(stringDataList.indexOf(task), task))
-                .collect(Collectors.toList());
-        return new ConfluenceTaskListFactory(taskList).toString();
-    }
-
 }

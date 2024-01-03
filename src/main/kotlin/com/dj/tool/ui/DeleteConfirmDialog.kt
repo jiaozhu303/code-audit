@@ -1,29 +1,26 @@
-package com.dj.tool.ui;
+package com.dj.tool.ui
 
-import com.intellij.openapi.ui.DialogWrapper;
-import groovyjarjarantlr4.v4.runtime.misc.Nullable;
+import com.intellij.openapi.ui.DialogWrapper
+import groovyjarjarantlr4.v4.runtime.misc.Nullable
+import java.awt.BorderLayout
+import java.awt.Dimension
+import javax.swing.JComponent
+import javax.swing.JLabel
+import javax.swing.JPanel
 
-import javax.swing.*;
-import java.awt.*;
-
-
-public class DeleteConfirmDialog extends DialogWrapper {
-
-
-    public DeleteConfirmDialog() {
-        super(true); // use current window as parent
-        setTitle("Delete Confirm");
-        init();
+class DeleteConfirmDialog : DialogWrapper(true) {
+    init {
+        title = "Delete Confirm"
+        init()
     }
 
     @Nullable
-    @Override
-    protected JComponent createCenterPanel() {
-        JPanel dialogPanel = new JPanel(new BorderLayout(0, 0));
+    override fun createCenterPanel(): JComponent? {
+        val dialogPanel = JPanel(BorderLayout(0, 0))
 
-        JLabel label = new JLabel("Do you want Delete？");
-        label.setPreferredSize(new Dimension(200, 60));
-        dialogPanel.add(label, BorderLayout.CENTER);
-        return dialogPanel;
+        val label = JLabel("Do you want Delete？", JLabel.CENTER)
+        label.preferredSize = Dimension(200, 60)
+        dialogPanel.add(label, BorderLayout.CENTER)
+        return dialogPanel
     }
 }

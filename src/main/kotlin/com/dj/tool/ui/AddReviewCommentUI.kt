@@ -1,72 +1,71 @@
-package com.dj.tool.ui;
+package com.dj.tool.ui
+
+import com.dj.tool.common.ApplicationCache
+import com.dj.tool.model.ReviewCommentInfoModel
+import com.dj.tool.publisher.DateRefreshMessagePublisher
+import com.intellij.openapi.project.Project
+import java.awt.Toolkit
+import java.awt.event.ActionEvent
+import javax.swing.*
 
 
-import com.dj.tool.common.ApplicationCache;
-import com.dj.tool.model.ReviewCommentInfoModel;
-import com.dj.tool.publisher.DateRefreshMessagePublisher;
-import com.intellij.openapi.project.Project;
+class AddReviewCommentUI {
+    private var reviewerTextField: JTextField? = null
+    private var commentsTextArea: JTextArea? = null
+    private var questionTypeComboBox: JComboBox<*>? = null
+    private var severityComboBox: JComboBox<*>? = null
+    private var triggerFactorComboBox: JComboBox<*>? = null
+    private var saveButton: JButton? = null
+    private var cancelButton: JButton? = null
+    private var addReviewCommentPanel: JPanel? = null
+    private var filePathTextField: JTextField? = null
+    private var codeContentsTextArea: JTextArea? = null
+    private var lineTextField: JTextField? = null
+    private var authorTextField: JTextField? = null
 
-import javax.swing.*;
-import java.awt.*;
+    companion object {
+        private const val WIDTH = 600
+        private const val HEIGHT = 600
 
+        fun showDialog(model: ReviewCommentInfoModel, project: Project?) {
+            val dialog = JDialog(JFrame())
+            dialog.title = "Add Code Audit Record"
+            val addComment = AddReviewCommentUI()
+            addComment.reviewerTextField!!.text = model.reviewer
+            addComment.commentsTextArea!!.text = model.comments
+            addComment.codeContentsTextArea!!.text = model.content
+            addComment.filePathTextField!!.text = model.filePath
+            addComment.lineTextField!!.text = model.getLineRange()
+            addComment.authorTextField!!.text = model.author
+            addComment.questionTypeComboBox!!.selectedItem = model.type
+            addComment.severityComboBox!!.selectedItem = model.severity
+            addComment.triggerFactorComboBox!!.selectedItem = model.factor
+            addComment.saveButton!!.addActionListener { e: ActionEvent? ->
+                model.content = addComment.codeContentsTextArea!!.text
+                model.comments = addComment.commentsTextArea!!.text
+                model.reviewer = addComment.reviewerTextField!!.text
+                model.author = addComment.authorTextField!!.text
+                model.type = addComment.questionTypeComboBox!!.selectedItem.toString()
+                model.severity = addComment.severityComboBox!!.selectedItem.toString()
+                model.factor = addComment.triggerFactorComboBox!!.selectedItem.toString()
+                ApplicationCache.addOneToCache(model)
+                DateRefreshMessagePublisher.getInstance(project).fireDateRefreshExecute("add code record", project)
+                dialog.dispose()
+            }
 
-public class AddReviewCommentUI {
+            addComment.cancelButton!!.addActionListener { e: ActionEvent? ->
+                dialog.dispose()
+            }
 
-    private static final int WIDTH = 600;
-    private static final int HEIGHT = 600;
+            val screenSize = Toolkit.getDefaultToolkit().screenSize
+            val w = (screenSize.width - WIDTH) / 2
+            val h = (screenSize.height * 95 / 100 - HEIGHT) / 2
+            dialog.setLocation(w, h)
 
-    private JTextField reviewerTextField;
-    private JTextArea commentsTextArea;
-    private JComboBox questionTypeComboBox;
-    private JComboBox severityComboBox;
-    private JComboBox triggerFactorComboBox;
-    private JButton saveButton;
-    private JButton cancelButton;
-    private JPanel addReviewCommentPanel;
-    private JTextField filePathTextField;
-    private JTextArea codeContentsTextArea;
-    private JTextField lineTextField;
-    private JTextField authorTextField;
-
-    public static void showDialog(ReviewCommentInfoModel model, Project project) {
-
-        JDialog dialog = new JDialog(new JFrame());
-        dialog.setTitle("Add Code Audit Record");
-        AddReviewCommentUI addComment = new AddReviewCommentUI();
-        addComment.reviewerTextField.setText(model.getReviewer());
-        addComment.commentsTextArea.setText(model.getComments());
-        addComment.codeContentsTextArea.setText(model.getContent());
-        addComment.filePathTextField.setText(model.getFilePath());
-        addComment.lineTextField.setText(model.getLineRange());
-        addComment.authorTextField.setText(model.getAuthor());
-        addComment.questionTypeComboBox.setSelectedItem(model.getType());
-        addComment.severityComboBox.setSelectedItem(model.getSeverity());
-        addComment.triggerFactorComboBox.setSelectedItem(model.getFactor());
-        addComment.saveButton.addActionListener(e -> {
-            model.setContent(addComment.codeContentsTextArea.getText());
-            model.setComments(addComment.commentsTextArea.getText());
-            model.setReviewer(addComment.reviewerTextField.getText());
-            model.setAuthor(addComment.authorTextField.getText());
-            model.setType(addComment.questionTypeComboBox.getSelectedItem().toString());
-            model.setSeverity(addComment.severityComboBox.getSelectedItem().toString());
-            model.setFactor(addComment.triggerFactorComboBox.getSelectedItem().toString());
-            ApplicationCache.addOneToCache(model);
-            DateRefreshMessagePublisher.getInstance(project).fireDateRefreshExecute("add code record", project);
-            dialog.dispose();
-        });
-
-        addComment.cancelButton.addActionListener(e -> {
-            dialog.dispose();
-        });
-
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int w = (screenSize.width - WIDTH) / 2;
-        int h = (screenSize.height * 95 / 100 - HEIGHT) / 2;
-        dialog.setLocation(w, h);
-
-        dialog.setContentPane(addComment.addReviewCommentPanel);
-        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        dialog.pack();
-        dialog.setVisible(true);
+            dialog.contentPane = addComment.addReviewCommentPanel
+            dialog.defaultCloseOperation = JDialog.DISPOSE_ON_CLOSE
+            dialog.pack()
+            dialog.isVisible = true
+        }
     }
 }

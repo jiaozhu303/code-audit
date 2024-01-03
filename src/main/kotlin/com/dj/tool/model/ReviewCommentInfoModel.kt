@@ -1,227 +1,158 @@
-package com.dj.tool.model;
+package com.dj.tool.model
+
+import com.google.common.base.Objects
+import com.intellij.openapi.util.text.StringUtil
+import java.io.Serializable
 
 
-import com.google.common.base.Objects;
-import com.intellij.openapi.util.text.StringUtil;
+class ReviewCommentInfoModel : Serializable {
+    @JvmField
+    var identifier: Long = 0
+    @JvmField
+    var reviewer: String? = null
 
-import java.io.Serializable;
+    @JvmField
+    var comments: String? = null
 
-public class ReviewCommentInfoModel implements Serializable {
-    private static final long serialVersionUID = -5134323185285399922L;
-    private long identifier;
-    private String reviewer;
-
-    private String comments;
-
-    private String filePath;
+    @JvmField
+    var filePath: String? = null
 
     /**
      * start ~ end的格式，用于显示
      * 运算的时候，行号是从0计算的，因此显示的时候，start和end在实际下标上+1
      */
-    private String lineRange;
+    private var lineRange: String? = null
 
-    private int startLine;
-    private int endLine;
+    @JvmField
+    var startLine: Int = 0
+    @JvmField
+    var endLine: Int = 0
 
-    private String content;
+    @JvmField
+    var content: String? = null
 
-    private String author;
+    @JvmField
+    var author: String? = null
 
-    private String type;
+    @JvmField
+    var type: String? = null
 
-    private String severity;
+    @JvmField
+    var severity: String? = null
 
-    private String factor;
+    @JvmField
+    var factor: String? = null
 
-    private String dateTime;
+    @JvmField
+    var dateTime: String? = null
 
-    private String projectName;
-
-    public String getProjectName() {
-        return this.projectName;
-    }
-
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
-
-    public String getAuthor() {
-        return this.author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public ReviewCommentInfoModel() {
-    }
-
-    public long getIdentifier() {
-        return identifier;
-    }
-
-    public void setIdentifier(long identifier) {
-        this.identifier = identifier;
-    }
-
-    public String getReviewer() {
-        return reviewer;
-    }
-
-    public void setReviewer(String reviewer) {
-        this.reviewer = reviewer;
-    }
-
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
-
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
+    @JvmField
+    var projectName: String? = null
 
 
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getSeverity() {
-        return severity;
-    }
-
-    public void setSeverity(String severity) {
-        this.severity = severity;
-    }
-
-    public String getFactor() {
-        return factor;
-    }
-
-    public void setFactor(String factor) {
-        this.factor = factor;
-    }
-
-
-    public String getDateTime() {
-        return dateTime;
-    }
-
-    public void setDateTime(String dateTime) {
-        this.dateTime = dateTime;
-    }
-
-    public String getLineRange() {
+    fun getLineRange(): String {
         if (lineRange == null) {
-            int start = startLine + 1;
-            int end = endLine + 1;
-            lineRange = start + " ~ " + end;
+            val start = startLine + 1
+            val end = endLine + 1
+            lineRange = "$start ~ $end"
         }
-        return lineRange;
+        return lineRange as String
     }
 
-    public void setStartLine(int startLine) {
-        this.startLine = startLine;
-    }
-
-    public void setEndLine(int endLine) {
-        this.endLine = endLine;
-    }
-
-    public int getStartLine() {
-        return this.startLine;
-    }
-
-    public int getEndLine() {
-        return this.endLine;
-    }
-
-    public boolean lineMatched(int currentLine) {
-
+    fun lineMatched(currentLine: Int): Boolean {
         if (startLine > currentLine || endLine < currentLine) {
             // 范围没有交集
-            return false;
+            return false
         }
 
-//        if (startLine > startIndex && endIndex < endLine) {
+        //        if (startLine > startIndex && endIndex < endLine) {
 //            // 完全在范围内的情况，忽略
 //            // 比如选择了一大段内容，里面会有很多的空格或者换行的情况，直接忽略掉
 //            return false;
 //        }
-
-        return true;
+        return true
     }
 
-    @Override
-    public String toString() {
+    override fun toString(): String {
         return "ReviewCommentInfoModel{" +
-            "identifier=" + identifier +
-            ", reviewer='" + reviewer + '\'' +
-            ", comments='" + comments + '\'' +
-            ", filePath='" + filePath + '\'' +
-            ", lineRange='" + lineRange + '\'' +
-            ", content='" + content + '\'' +
-            ", type='" + type + '\'' +
-            ", severity='" + severity + '\'' +
-            ", factor='" + factor + '\'' +
-            ", dateTime='" + dateTime + '\'' +
-            ", author='" + author + '\'' +
-            ", projectName='" + projectName + '\'' +
-            '}';
+                "identifier=" + identifier +
+                ", reviewer='" + reviewer + '\'' +
+                ", comments='" + comments + '\'' +
+                ", filePath='" + filePath + '\'' +
+                ", lineRange='" + lineRange + '\'' +
+                ", content='" + content + '\'' +
+                ", type='" + type + '\'' +
+                ", severity='" + severity + '\'' +
+                ", factor='" + factor + '\'' +
+                ", dateTime='" + dateTime + '\'' +
+                ", author='" + author + '\'' +
+                ", projectName='" + projectName + '\'' +
+                '}'
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ReviewCommentInfoModel)) return false;
-        ReviewCommentInfoModel that = (ReviewCommentInfoModel) o;
-        return getIdentifier() == that.getIdentifier() && getStartLine() == that.getStartLine() && getEndLine() == that.getEndLine() && Objects.equal(getReviewer(), that.getReviewer()) && Objects.equal(getComments(), that.getComments()) && Objects.equal(getFilePath(), that.getFilePath()) && Objects.equal(getLineRange(), that.getLineRange()) && Objects.equal(getContent(), that.getContent()) && Objects.equal(getAuthor(), that.getAuthor()) && Objects.equal(getType(), that.getType()) && Objects.equal(getSeverity(), that.getSeverity()) && Objects.equal(getFactor(), that.getFactor()) && Objects.equal(getDateTime(), that.getDateTime()) && Objects.equal(getProjectName(), that.getProjectName());
+    override fun equals(o: Any?): Boolean {
+        if (this === o) return true
+        if (o !is ReviewCommentInfoModel) return false
+        val that = o
+        return identifier == that.identifier && startLine == that.startLine && endLine == that.endLine && Objects.equal(
+            reviewer, that.reviewer
+        ) && Objects.equal(comments, that.comments) && Objects.equal(
+            filePath, that.filePath
+        ) && Objects.equal(getLineRange(), that.getLineRange()) && Objects.equal(
+            content, that.content
+        ) && Objects.equal(author, that.author) && Objects.equal(type, that.type) && Objects.equal(
+            severity, that.severity
+        ) && Objects.equal(factor, that.factor) && Objects.equal(dateTime, that.dateTime) && Objects.equal(
+            projectName, that.projectName
+        )
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getIdentifier(), getReviewer(), getComments(), getFilePath(), getLineRange(), getStartLine(), getEndLine(), getContent(), getAuthor(), getType(), getSeverity(), getFactor(), getDateTime(), getProjectName());
+    override fun hashCode(): Int {
+        return Objects.hashCode(
+            identifier,
+            reviewer,
+            comments,
+            filePath,
+            getLineRange(),
+            startLine,
+            endLine,
+            content,
+            author,
+            type,
+            severity,
+            factor,
+            dateTime,
+            projectName
+        )
     }
 
-    public String toCopyString() {
-        String copyLine = "[" + projectName + "] - " + filePath + " line: " + lineRange;
+    fun toCopyString(): String {
+        var copyLine = "[$projectName] - $filePath line: $lineRange"
         if (!StringUtil.isEmpty(comments)) {
-            copyLine = copyLine + " (" + comments + ") ";
+            copyLine = "$copyLine ($comments) "
         }
         if (!StringUtil.isEmpty(author)) {
-            copyLine = copyLine + " author: @" + author;
+            copyLine = "$copyLine author: @$author"
         }
-        return copyLine + "\n\r";
+        return """
+             $copyLine
+             
+             
+             """.trimIndent()
     }
 
-    public String toSyncString() {
-        String copyLine = "[" + projectName + "] - " + filePath + " line: " + lineRange;
+    fun toSyncString(): String {
+        var copyLine = "[$projectName] - $filePath line: $lineRange"
         if (!StringUtil.isEmpty(comments)) {
-            copyLine = copyLine + " (" + comments + ") ";
+            copyLine = "$copyLine ($comments) "
         }
         if (!StringUtil.isEmpty(author)) {
-            copyLine = copyLine + " author: @" + author;
+            copyLine = "$copyLine author: @$author"
         }
-        return copyLine;
+        return copyLine
+    }
+
+    companion object {
+        private const val serialVersionUID = -5134323185285399922L
     }
 }

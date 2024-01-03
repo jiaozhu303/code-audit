@@ -1,81 +1,75 @@
-package com.dj.tool.common;
+package com.dj.tool.common
 
-import com.dj.tool.model.CodeAuditSettingModel;
-import com.dj.tool.model.ReviewCommentInfoModel;
-import com.dj.tool.service.CodeAuditSettingApplicationService;
-import com.google.common.collect.Lists;
-import com.intellij.ide.util.PropertiesComponent;
-import org.apache.commons.collections4.CollectionUtils;
+import com.dj.tool.model.CodeAuditSettingModel
+import com.dj.tool.model.ReviewCommentInfoModel
+import com.dj.tool.service.CodeAuditSettingApplicationService.Companion.instance
+import com.google.common.collect.Lists
+import com.intellij.ide.util.PropertiesComponent
+import org.apache.commons.collections4.CollectionUtils
+import java.util.*
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+object ApplicationCache {
+    val codeAuditSetting: CodeAuditSettingModel
+        get() {
+            val appComponent = PropertiesComponent.getInstance()
+            val url = appComponent.getValue(Constants.SETTING_URL_KEY, "")
+            val user = appComponent.getValue(Constants.SETTING_USER_KEY, "")
+            val password = appComponent.getValue(Constants.SETTING_PASSWORD_KEY, "")
+            val spaceKey = appComponent.getValue(Constants.SETTING_CONF_SPACE_KEY, "")
+            val parentId = appComponent.getValue(Constants.SETTING_CONF_PARENT_DIR_ID, "")
+            val model = CodeAuditSettingModel(url, user, password, spaceKey, parentId)
+            return model
+        }
 
-import static com.dj.tool.common.Constants.*;
-
-public class ApplicationCache {
-
-    public static CodeAuditSettingModel getCodeAuditSetting() {
-        PropertiesComponent appComponent = PropertiesComponent.getInstance();
-        String url = appComponent.getValue(SETTING_URL_KEY);
-        String user = appComponent.getValue(SETTING_USER_KEY);
-        String password = appComponent.getValue(SETTING_PASSWORD_KEY);
-        String spaceKey = appComponent.getValue(SETTING_CONF_SPACE_KEY);
-        String parentId = appComponent.getValue(SETTING_CONF_PARENT_DIR_ID);
-        CodeAuditSettingModel model = new CodeAuditSettingModel(url, user, password, spaceKey, parentId);
-        return model;
+    fun saveCodeAuditSetting(url: String?, userName: String?, password: String?, spaceKey: String?, parentId: String?) {
+        val appComponent = PropertiesComponent.getInstance()
+        appComponent.setValue(Constants.SETTING_URL_KEY, url)
+        appComponent.setValue(Constants.SETTING_USER_KEY, userName)
+        appComponent.setValue(Constants.SETTING_PASSWORD_KEY, password)
+        appComponent.setValue(Constants.SETTING_CONF_SPACE_KEY, spaceKey)
+        appComponent.setValue(Constants.SETTING_CONF_PARENT_DIR_ID, parentId)
     }
 
-    public static void saveCodeAuditSetting(String url, String userName, String password, String spaceKey, String parentId) {
-        PropertiesComponent appComponent = PropertiesComponent.getInstance();
-        appComponent.setValue(SETTING_URL_KEY, url);
-        appComponent.setValue(SETTING_USER_KEY, userName);
-        appComponent.setValue(SETTING_PASSWORD_KEY, password);
-        appComponent.setValue(SETTING_CONF_SPACE_KEY, spaceKey);
-        appComponent.setValue(SETTING_CONF_PARENT_DIR_ID, parentId);
+    fun cleanAllCache(projectName: String?) {
+        val instance = instance
+        instance.cleanAllCacheData(projectName)
     }
 
-    public static void cleanAllCache(String projectName) {
-        CodeAuditSettingApplicationService instance = CodeAuditSettingApplicationService.getInstance();
-        instance.cleanAllCacheData(projectName);
-    }
-
-    public static void deleteOneFromCache(Long id) {
+    fun deleteOneFromCache(id: Long?) {
         if (id == null) {
-            return;
+            return
         }
-        CodeAuditSettingApplicationService instance = CodeAuditSettingApplicationService.getInstance();
-        instance.deleteOneCacheData(id);
+        val instance = instance
+        instance.deleteOneCacheData(id)
     }
 
-    public static void deleteCacheList(List<Long> idList) {
+    fun deleteCacheList(idList: List<Long?>?) {
         if (CollectionUtils.isEmpty(idList)) {
-            return;
+            return
         }
-        CodeAuditSettingApplicationService instance = CodeAuditSettingApplicationService.getInstance();
-        instance.deleteCacheList(idList);
+        val instance = instance
+        instance.deleteCacheList(idList!!)
     }
 
-    public static void addOneToCache(ReviewCommentInfoModel model) {
+    fun addOneToCache(model: ReviewCommentInfoModel?) {
         if (Objects.isNull(model)) {
-            return;
+            return
         }
-        CodeAuditSettingApplicationService instance = CodeAuditSettingApplicationService.getInstance();
-        instance.addOneCacheData(model);
+        val instance = instance
+        instance.addOneCacheData(model!!)
     }
 
-    public static List<ReviewCommentInfoModel> getAllDataList(String projectName) {
-        CodeAuditSettingApplicationService instance = CodeAuditSettingApplicationService.getInstance();
-        return instance.getAllDataList(projectName);
+    fun getAllDataList(projectName: String?): List<ReviewCommentInfoModel?> {
+        val instance = instance
+        return instance.getAllDataList(projectName)
     }
 
-    public static List<ReviewCommentInfoModel> getProjectAllData(String projectName) {
-        return Optional.ofNullable(getAllDataList(projectName)).orElseGet(Lists::newArrayList);
+    fun getProjectAllData(projectName: String?): List<ReviewCommentInfoModel?> {
+        return Optional.ofNullable(getAllDataList(projectName)).orElseGet { Lists.newArrayList() }
     }
 
-    public static void updateProjectData(ReviewCommentInfoModel model) {
-        CodeAuditSettingApplicationService instance = CodeAuditSettingApplicationService.getInstance();
-        instance.updateItem(model);
+    fun updateProjectData(model: ReviewCommentInfoModel?) {
+        val instance = instance
+        instance.updateItem(model!!)
     }
-
 }
