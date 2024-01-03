@@ -16,10 +16,9 @@ class DeleteConfirmDialog : DialogWrapper(true) {
 
     @Nullable
     override fun createCenterPanel(): JComponent? {
-        val dialogPanel = JPanel(BorderLayout(0, 0))
-
-        val label = JLabel("Do you want Delete？", JLabel.CENTER)
-        label.preferredSize = Dimension(200, 60)
+        val dialogPanel = JPanel(BorderLayout())
+        val label = JLabel("Do you want remove this item ？", JLabel.LEFT)
+        label.preferredSize = Dimension(200, 50)
         dialogPanel.add(label, BorderLayout.CENTER)
         return dialogPanel
     }

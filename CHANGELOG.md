@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+## [2.4.4]
+
+### Change
+
+- Rebuild project with Kotlin Language
+- update popup window with Jetbrains SDK Dialogs API
+
 ## [2.4.3]
 
 ### Change

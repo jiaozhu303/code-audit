@@ -3,7 +3,7 @@ package com.dj.tool.action
 import com.dj.tool.common.CommonUtil
 import com.dj.tool.common.Constants
 import com.dj.tool.model.ReviewCommentInfoModel
-import com.dj.tool.ui.AddReviewCommentUI
+import com.dj.tool.ui.AddReviewCommentDialog
 import com.intellij.codeInsight.daemon.OutsidersPsiFileSupport
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -48,6 +48,9 @@ class AddComment : AnAction() {
         model.severity = Constants.SEVERITY_GENERAL
         model.factor = Constants.FACTOR_BASIC
 
-        AddReviewCommentUI.showDialog(model, project)
+        val dialog = AddReviewCommentDialog(project, model)
+        if(dialog.showAndGet()){
+            dialog.save();
+        }
     }
 }

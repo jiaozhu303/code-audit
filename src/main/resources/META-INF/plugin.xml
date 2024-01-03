@@ -70,7 +70,7 @@ Generally, our Code review is to mark the problems in the code, and Code Audit i
         <!--        <projectService serviceImplementation="com.dj.tool.listener.DateRefreshNotifyListener"/>-->
         <projectService serviceImplementation="com.dj.tool.publisher.DateRefreshMessagePublisher"/>
 
-        <toolWindow id="CodeRecord"
+        <toolWindow id="Code Audit Management"
                     icon="MyIcons.ToolWindow"
                     anchor="bottom"
                     doNotActivateOnStart="true"

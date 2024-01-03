@@ -18,7 +18,7 @@ class ManageReviewComment : ToolWindowFactory {
             .subscribe(DateRefreshMessagePublisher.TOPIC, DateRefreshNotifyListener(manageReviewCommentUI))
 
         val contentFactory = ContentFactory.getInstance()
-        val content = contentFactory.createContent(manageReviewCommentUI.fullPanel, null, false)
+        val content = contentFactory.createContent(manageReviewCommentUI.fullPanel, "Review Record List", false)
         toolWindow.contentManager.addContent(content)
         toolWindow.setIcon(MyIcons.ToolWindow)
     }
