@@ -125,21 +125,12 @@ tasks {
         systemProperty("jb.consents.confirmation.enabled", "false")
     }
 
-//    signPlugin {
-//        certificateChain = environment("CERTIFICATE_CHAIN")
-//        privateKey = environment("PRIVATE_KEY")
-//        password = environment("PRIVATE_KEY_PASSWORD")
-//    }
 
     signPlugin {
         certificateChainFile = file("/Users/zhaodj/chain.crt")
         privateKeyFile = file("/Users/zhaodj/private.pem")
         password = "ad5887303"
     }
-
-//    publishPlugin {
-//        token = "perm:a961riC....l17oW8t+Qw=="
-//    }
 
     publishPlugin {
         dependsOn("patchChangelog")
