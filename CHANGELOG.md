@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+## [2.4.5]
+
+### Change
+
+- update book mark provider
+
+
 ## [2.4.4]
 
 ### Change

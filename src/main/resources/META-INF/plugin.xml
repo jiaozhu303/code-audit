@@ -46,7 +46,7 @@ Generally, our Code review is to mark the problems in the code, and Code Audit i
 
 
     <depends>com.intellij.modules.platform</depends>
-
+    <depends>Git4Idea</depends>
     <actions>
 
         <group id="code-audit-group" text="Code Audit" description="Code Audit" icon="MyIcons.Code" popup="true">
@@ -75,7 +75,8 @@ Generally, our Code review is to mark the problems in the code, and Code Audit i
                     anchor="bottom"
                     doNotActivateOnStart="true"
                     factoryClass="com.dj.tool.action.ManageReviewComment"/>
-        <codeInsight.lineMarkerProvider implementationClass="com.dj.tool.action.LeftMarkIconProvider" language="" id="Code Audit LeftMarkIconProvider" order="last"/>
+        <codeInsight.lineMarkerProvider implementationClass="com.dj.tool.action.LeftMarkIconProvider" language=""
+                                        id="Code Audit LeftMarkIconProvider" order="last"/>
         <notificationGroup id="Code Audit Notification"
                            displayType="BALLOON"/>
     </extensions>

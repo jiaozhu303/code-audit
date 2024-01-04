@@ -1,9 +1,7 @@
 package com.dj.tool.provider;
 
 import com.dj.tool.action.LeftMarkIconProvider;
-import com.dj.tool.publisher.DateRefreshMessagePublisher;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 
 public class MarkIconProviderFactory {
@@ -18,5 +16,6 @@ public class MarkIconProviderFactory {
         LeftMarkIconProvider provider = ServiceManager.getService(project, LeftMarkIconProvider.class);
         return provider;
     }
+
 
 }

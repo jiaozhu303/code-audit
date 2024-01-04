@@ -4,10 +4,13 @@ import com.dj.tool.common.CommonUtil
 import com.dj.tool.common.Constants
 import com.dj.tool.model.ReviewCommentInfoModel
 import com.dj.tool.ui.AddReviewCommentDialog
-import com.intellij.codeInsight.daemon.OutsidersPsiFileSupport
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import git4idea.GitUserRegistry
+import git4idea.repo.GitRepositoryManager
 import org.jetbrains.annotations.NonNls
 
 class AddComment : AnAction() {
@@ -15,7 +18,7 @@ class AddComment : AnAction() {
         //获取当前类文件的路径
         val project = e.project
         val virtualFile = e.getData(CommonDataKeys.VIRTUAL_FILE) ?: return
-        val isOutsiderFile = OutsidersPsiFileSupport.isOutsiderFile(virtualFile)
+//        val author = getAuthor(project, virtualFile)
         val fullPath: @NonNls String = virtualFile.path ?: return
         val basePath = project!!.basePath
         val fileName = fullPath.substring(basePath!!.length + 1, fullPath.length)
@@ -36,7 +39,6 @@ class AddComment : AnAction() {
         model.startLine = startLine
         model.endLine = endLine
         model.content = selectedText
-        //        model.setAuthor(GitOperationUtil.getAnnotateAuthor(project, virtualFile, startLine, isOutsiderFile));
         model.author = ""
         model.projectName = project.name
         model.filePath = fileName
@@ -49,8 +51,17 @@ class AddComment : AnAction() {
         model.factor = Constants.FACTOR_BASIC
 
         val dialog = AddReviewCommentDialog(project, model)
-        if(dialog.showAndGet()){
+        if (dialog.showAndGet()) {
             dialog.save();
         }
     }
+
+    fun getAuthor(project: Project?, virtualFile: VirtualFile): String {
+        val manager = GitRepositoryManager.getInstance(project!!)
+        val repository = manager.repositories;
+        val registry = GitUserRegistry.getInstance(project)
+        val user = registry.getOrReadUser(repository.get(0).root)
+        return user!!.name
+    }
+
 }
