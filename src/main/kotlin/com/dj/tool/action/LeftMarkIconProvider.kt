@@ -9,14 +9,27 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import icons.MyIcons
+import javax.swing.Icon
 
 class LeftMarkIconProvider : RelatedItemLineMarkerProvider() {
+
+    override fun getIcon(): Icon? {
+        return MyIcons.EditorQuestion;
+    }
+
+    override fun getId(): String {
+        return "Code Audit LeftMarkIconProvider";
+    }
+
+    override fun getName(): String? {
+        return "Code Audit LeftMarkIconProvider";
+    }
+
     override fun collectNavigationMarkers(
         element: PsiElement,
         result: MutableCollection<in RelatedItemLineMarkerInfo<*>?>
     ) {
         if (element !is PsiWhiteSpace) {
-            super.collectNavigationMarkers(element, result)
             return
         }
 
@@ -25,10 +38,8 @@ class LeftMarkIconProvider : RelatedItemLineMarkerProvider() {
         val textEndOffset = textOffset + textLength
 
         if (textOffset < 0) {
-            super.collectNavigationMarkers(element, result)
             return
         }
-
 
         val containingFile = element.getContainingFile()
         val project = element.getProject()
@@ -39,7 +50,6 @@ class LeftMarkIconProvider : RelatedItemLineMarkerProvider() {
 
             // 同一行内的空格重复匹配，不处理，直接忽略
             if (startLineNumber == endLineNumber) {
-                super.collectNavigationMarkers(element, result)
                 return
             }
 
@@ -58,10 +68,11 @@ class LeftMarkIconProvider : RelatedItemLineMarkerProvider() {
                     result.add(builder.createLineMarkerInfo(element))
                     return
                 }
+                return
             }
+            return
         }
 
-        super.collectNavigationMarkers(element, result)
     }
 
     fun getCommentInfo(filePath: String?, currentLine: Int, dataList: List<ReviewCommentInfoModel?>): String? {

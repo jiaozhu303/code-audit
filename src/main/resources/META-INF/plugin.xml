@@ -75,9 +75,7 @@ Generally, our Code review is to mark the problems in the code, and Code Audit i
                     anchor="bottom"
                     doNotActivateOnStart="true"
                     factoryClass="com.dj.tool.action.ManageReviewComment"/>
-        <codeInsight.lineMarkerProvider
-                language=""
-                implementationClass="com.dj.tool.action.LeftMarkIconProvider"/>
+        <codeInsight.lineMarkerProvider implementationClass="com.dj.tool.action.LeftMarkIconProvider" language="" id="Code Audit LeftMarkIconProvider" order="last"/>
         <notificationGroup id="Code Audit Notification"
                            displayType="BALLOON"/>
     </extensions>
