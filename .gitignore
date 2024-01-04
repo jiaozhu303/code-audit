@@ -3,3 +3,5 @@
 .qodana
 build
 .idea/*
+.DS_Store
+.DS_Store/*
