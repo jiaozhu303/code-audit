@@ -46,7 +46,6 @@ Generally, our Code review is to mark the problems in the code, and Code Audit i
 
 
     <depends>com.intellij.modules.platform</depends>
-    <depends>Git4Idea</depends>
     <actions>
 
         <group id="code-audit-group" text="Code Audit" description="Code Audit" icon="MyIcons.Code" popup="true">
