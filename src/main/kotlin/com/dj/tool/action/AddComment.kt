@@ -7,10 +7,6 @@ import com.dj.tool.ui.AddReviewCommentDialog
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
-import git4idea.GitUserRegistry
-import git4idea.repo.GitRepositoryManager
 import org.jetbrains.annotations.NonNls
 
 class AddComment : AnAction() {
@@ -54,14 +50,6 @@ class AddComment : AnAction() {
         if (dialog.showAndGet()) {
             dialog.save();
         }
-    }
-
-    fun getAuthor(project: Project?, virtualFile: VirtualFile): String {
-        val manager = GitRepositoryManager.getInstance(project!!)
-        val repository = manager.repositories;
-        val registry = GitUserRegistry.getInstance(project)
-        val user = registry.getOrReadUser(repository.get(0).root)
-        return user!!.name
     }
 
 }
