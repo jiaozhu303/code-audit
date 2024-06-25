@@ -4,6 +4,17 @@
 
 ## [Unreleased]
 
+## [2.5.3]
+
+### Change
+
+- support 2024.2
+
+## [2.5.2]
+
+### Change
+
+- support 2024.4
 
 ## [2.5.1]
 
@@ -501,7 +512,10 @@
 - GitHub Actions to automate testing and deployment
 - Kotlin support
 
-[Unreleased]: https://github.com/jiaozhu303/code-audit/releases/compare/v2.4.6...HEAD
+[Unreleased]: https://github.com/jiaozhu303/code-audit/releases/compare/v2.5.2...HEAD
+[2.5.2]: https://github.com/jiaozhu303/code-audit/releases/compare/v2.5.1...v2.5.2
+[2.5.1]: https://github.com/jiaozhu303/code-audit/releases/compare/v2.5.0...v2.5.1
+[2.5.0]: https://github.com/jiaozhu303/code-audit/releases/compare/v2.4.6...v2.5.0
 [2.4.6]: https://github.com/jiaozhu303/code-audit/releases/compare/v2.4.5...v2.4.6
 [2.4.5]: https://github.com/jiaozhu303/code-audit/releases/compare/v2.4.4...v2.4.5
 [2.4.4]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v2.4.3...v2.4.4
