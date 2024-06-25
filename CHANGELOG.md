@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+
+## [2.5.4]
+
+### Change
+
+- support 2024.1
+
 ## [2.5.3]
 
 ### Change
