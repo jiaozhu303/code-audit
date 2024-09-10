@@ -524,7 +524,10 @@
 - GitHub Actions to automate testing and deployment
 - Kotlin support
 
-[Unreleased]: https://github.com/jiaozhu303/code-audit/releases/compare/v2.5.2...HEAD
+[Unreleased]: https://github.com/jiaozhu303/code-audit/releases/compare/v2.5.5...HEAD
+[2.5.5]: https://github.com/jiaozhu303/code-audit/releases/compare/v2.5.4...v2.5.5
+[2.5.4]: https://github.com/jiaozhu303/code-audit/releases/compare/v2.5.3...v2.5.4
+[2.5.3]: https://github.com/jiaozhu303/code-audit/releases/compare/v2.5.2...v2.5.3
 [2.5.2]: https://github.com/jiaozhu303/code-audit/releases/compare/v2.5.1...v2.5.2
 [2.5.1]: https://github.com/jiaozhu303/code-audit/releases/compare/v2.5.0...v2.5.1
 [2.5.0]: https://github.com/jiaozhu303/code-audit/releases/compare/v2.4.6...v2.5.0
