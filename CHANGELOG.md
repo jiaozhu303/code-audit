@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+## [2.5.5]
+
+### Change
+
+- handle compatibility
 
 ## [2.5.4]
 

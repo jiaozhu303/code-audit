@@ -7,6 +7,7 @@ import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.conn.ssl.NoopHostnameVerifier
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory
+import org.apache.http.entity.ContentType
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager
@@ -140,7 +141,7 @@ object HttpRequestFactory {
         //创建post方式请求对象
         val httpPost = HttpPost(url)
 
-        httpPost.entity = StringEntity(JsonUtils.toJson(map), Constants.MIME_TYPE_APPLICATION_JSON, encoding)
+        httpPost.entity = StringEntity(JsonUtils.toJson(map), ContentType.APPLICATION_JSON)
 
         val authorization = Constants.BASIC_AUTH_PREFIX +
                 Base64.getUrlEncoder().encodeToString("$userName:$password".toByteArray())
